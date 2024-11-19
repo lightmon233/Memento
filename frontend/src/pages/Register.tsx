@@ -22,7 +22,7 @@ export const Register: React.FC = () => {
   const onSubmit = async (data: RegisterForm) => {
     try {
       // TODO: Implement actual API call
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -30,6 +30,10 @@ export const Register: React.FC = () => {
       
       if (response.ok) {
         navigate('/login');
+      } else {
+        // 处理错误响应
+        const errorMessage = await response.text();
+        console.error('Registration failed:', errorMessage);
       }
     } catch (error) {
       console.error('Registration failed:', error);

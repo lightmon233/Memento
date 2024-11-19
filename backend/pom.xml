@@ -8,15 +8,15 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.0</version>
     </parent>
-    
+
     <groupId>com.photoalbum</groupId>
     <artifactId>photo-album-system</artifactId>
     <version>1.0.0</version>
-    
+
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -30,10 +30,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
@@ -42,7 +39,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

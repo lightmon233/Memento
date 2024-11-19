@@ -21,14 +21,16 @@ export const Login: React.FC = () => {
   const onSubmit = async (data: LoginForm) => {
     try {
       // TODO: Implement actual API call
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       
       if (response.ok) {
-        const { token } = await response.json();
+        // 使用text()获取原始文本内容(JWT token)
+        const token = await response.text();
+        console.log("token:", token);
         login(token);
         navigate('/');
       }

@@ -18,7 +18,9 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 使用PasswordEncoder对密码进行加密
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         user.setAdmin(false);
         return userRepository.save(user);
     }
@@ -26,5 +28,14 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User authenticateUser(String username, String password) {
+        User user = findByUsername(username);
+        // 使用PasswordEncoder验证密码
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
     }
 }
