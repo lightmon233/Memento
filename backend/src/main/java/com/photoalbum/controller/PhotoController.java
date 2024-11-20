@@ -1,5 +1,7 @@
 package com.photoalbum.controller;
 
+import com.photoalbum.dto.PhotoRequest;
+import com.photoalbum.model.Album;
 import com.photoalbum.model.Photo;
 import com.photoalbum.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +14,28 @@ import org.springframework.web.multipart.MultipartFile;
 public class PhotoController {
     @Autowired
     private PhotoService photoService;
-    
+
     @PostMapping
-    public ResponseEntity<?> uploadPhoto(@RequestParam("file") MultipartFile file, @RequestBody Photo photo) {
+    public ResponseEntity<?> uploadPhoto(@ModelAttribute PhotoRequest photoRequest) {
+        MultipartFile file = photoRequest.getFile();
+        String url = "url";
+        if (file != null && !file.isEmpty()) {
+            try {
+                url = photoService.uploadPhoto(file);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            }
+        }
+        Photo photo = new Photo();
+        photo.setTitle(photoRequest.getTitle());
+        Album album = new Album();
+        album.setId(photoRequest.getAlbumId());
+        photo.setAlbum(album);
+        photo.setUrl(url);
         try {
-            return ResponseEntity.ok(photoService.uploadPhoto(file, photo));
+            return ResponseEntity.ok(photoService.savePhoto(photo));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to upload photo");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     

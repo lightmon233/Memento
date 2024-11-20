@@ -21,8 +21,8 @@ public class User {
     private String email;
     private boolean isAdmin;
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Album> albums;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<Album> albums;
 
     // 添加 getCreatedAt 方法
     // 添加记录用户创建时间的字段

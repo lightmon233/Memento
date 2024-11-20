@@ -1,6 +1,8 @@
 package com.photoalbum.model;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,13 +16,19 @@ public class Photo {
     private Long id;
     
     private String title;
-    private String description;
-    private String filePath;
-    private LocalDateTime uploadTime;
+    private String url;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
     
     @ManyToOne
     @JoinColumn(name = "album_id")
     private Album album;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
     private List<Comment> comments;
