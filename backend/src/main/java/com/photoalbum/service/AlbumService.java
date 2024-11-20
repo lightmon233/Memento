@@ -30,4 +30,9 @@ public class AlbumService {
     public List<Album> getAlbumsByCategory(String category) {
         return albumRepository.findByCategory(category);
     }
+
+    // 新增的 getAllAlbums 方法
+    public List<Album> getAllAlbums() {
+        return albumRepository.findAll();  // 返回所有专辑
+    }
 }

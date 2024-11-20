@@ -16,7 +16,12 @@ public class AlbumController {
     public ResponseEntity<?> createAlbum(@RequestBody Album album) {
         return ResponseEntity.ok(albumService.createAlbum(album));
     }
-    
+
+    @GetMapping
+    public ResponseEntity<?> getAllAlbums() {
+        return ResponseEntity.ok(albumService.getAllAlbums());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAlbum(@PathVariable Long id, @RequestBody Album album) {
         album.setId(id);
