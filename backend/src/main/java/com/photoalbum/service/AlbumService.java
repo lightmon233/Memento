@@ -5,6 +5,7 @@ import com.photoalbum.repository.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,7 +25,8 @@ public class AlbumService {
     }
     
     public List<Album> getUserAlbums(Long userId) {
-        return albumRepository.findByUserId(userId);
+        List<Album> albums = albumRepository.findByUserId(userId);
+        return albums != null ? albums : Collections.emptyList();
     }
     
     public List<Album> getAlbumsByCategory(String category) {

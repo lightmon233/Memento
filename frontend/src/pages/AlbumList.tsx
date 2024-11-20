@@ -3,21 +3,48 @@ import { Album } from '../types';
 import { AlbumCard } from '../components/AlbumCard';
 import { Plus } from 'lucide-react';
 import { Modal } from '../components/Modal';
+import { useAuth } from '../context/AuthContext';
 
 export const AlbumList: React.FC = () => {
+  const { user } = useAuth();
   const [albums, setAlbums] = useState<Album[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [albumToEdit, setAlbumToEdit] = useState<Album | null>(null);
 
   useEffect(() => {
     // Fetch albums from API
-    const fetchAlbums = async () => {
-      const response = await fetch('/api/albums');
-      const data = await response.json();
-      setAlbums(data);
-    };
-    fetchAlbums();
-  }, []);
+    console.log(user);
+    if (user && user.id) {
+      const fetchAlbums = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error("No token found!");
+          return;
+        }
+        try {
+          const response = await fetch(`/api/albums/user/${user.id}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log(data);
+          setAlbums(data);
+        } catch (error) {
+          console.error("Failed to fetch albums:", error);
+        }
+      };
+      fetchAlbums();
+    }
+  }, [user]);
+
+  if (!user) {
+    return <p>Please log in to view your albums.</p>
+  }
 
   const handleCreateAlbum = async (album: { title: string; description: string; category: string }) => {
     // Make API call to create album
