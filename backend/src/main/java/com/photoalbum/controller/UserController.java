@@ -1,6 +1,6 @@
 package com.photoalbum.controller;
 
-import com.photoalbum.model.RegisterRequest;
+import com.photoalbum.dto.RegisterRequest;
 import com.photoalbum.model.User;
 import com.photoalbum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

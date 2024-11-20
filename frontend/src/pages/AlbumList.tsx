@@ -47,16 +47,37 @@ export const AlbumList: React.FC = () => {
   }
 
   const handleCreateAlbum = async (album: { title: string; description: string; category: string }) => {
-    // Make API call to create album
-    const response = await fetch('/api/albums', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(album),
-    });
-    const newAlbum = await response.json();
-    setAlbums([...albums, newAlbum]); // Add the new album to the state
+    if (!user || !user.id) {
+      console.error("User is not logged in.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
+      const requestBody = {
+        ...album,
+        userId: user.id,
+      }
+      const response = await fetch('/api/albums', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to create album: ${response.status}`);
+      }
+      const newAlbum: Album = await response.json();
+      setAlbums([...albums, newAlbum]);
+    } catch (error) {
+      console.error("Error creating album:", error);
+    }
   };
 
   const handleEditAlbum = async (album: { title: string; description: string; category: string }) => {
