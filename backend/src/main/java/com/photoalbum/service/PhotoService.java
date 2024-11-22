@@ -29,12 +29,14 @@ public class PhotoService {
 
     @Value("${nginx.upload.url}")
     private String nginxUrl;
+    @Value("${nginx.download.url}")
+    private String downloadUrl;
     
     private final Path rootLocation = Paths.get("uploads");
     
     public String uploadPhoto(MultipartFile file) throws IOException {
         // step1: generate unique filename
-        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        // String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         // Files.copy(file.getInputStream(), rootLocation.resolve(filename));
         // step2: upload file to nginx server
         return uploadFileToNginx(file);
@@ -59,7 +61,7 @@ public class PhotoService {
         );
         // step5: 处理响应
         if (response.getStatusCode().is2xxSuccessful()) {
-            return nginxUrl + "/" + file.getName();
+            return downloadUrl + "/" + file.getOriginalFilename();
         } else {
             throw new IOException("Failed to upload file to Nginx server. Status: " + response.getStatusCode());
         }
