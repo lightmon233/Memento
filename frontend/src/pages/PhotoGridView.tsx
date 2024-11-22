@@ -35,10 +35,20 @@ export const PhotoGridView: React.FC = () => {
     formData.append("albumId", id!);
     formData.append("title", file.name); // 将文件名作为title传递
 
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error("No token found!");
+      return;
+    }
+
     try {
       setUploading(true);
       const response = await fetch(`/api/photos`, {
         method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
 

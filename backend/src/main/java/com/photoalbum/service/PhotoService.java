@@ -37,8 +37,7 @@ public class PhotoService {
         String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         // Files.copy(file.getInputStream(), rootLocation.resolve(filename));
         // step2: upload file to nginx server
-        // return uploadFileToNginx(file);
-        return filename;
+        return uploadFileToNginx(file);
     }
 
     public String uploadFileToNginx(MultipartFile file) throws IOException {
