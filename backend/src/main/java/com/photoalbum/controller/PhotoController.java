@@ -50,14 +50,15 @@ public class PhotoController {
         return ResponseEntity.ok().build();
     }
 
+    // 新增 getPhoto 方法
     @GetMapping("/{id}")
     public ResponseEntity<?> getPhoto(@PathVariable Long id) {
         try {
-            Photo photo = photoService.getPhoto(id);
+            Photo photo = photoService.getPhoto(id); // 假设 photoService 提供了 getPhoto 方法
             if (photo == null) {
                 return ResponseEntity.notFound().build();
-                return ResponseEntity.ok(photo.getUrl());
             }
+            return ResponseEntity.ok(photo.getUrl()); // 返回 Photo 的 URL
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving photo: " + e.getMessage());
         }
