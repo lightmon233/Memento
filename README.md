@@ -187,13 +187,29 @@ deactivate AlbumController
 ```mermaid
 sequenceDiagram
 actor User
-User ->> PhotoService : uploadPhoto
+User ->> PhotoController : uploadPhoto
+activate PhotoController
+PhotoController ->> PhotoService : uploadPhoto
 activate PhotoService
 PhotoService ->> PhotoService : uploadFileToNginx
 activate PhotoService
 PhotoService -->> PhotoService : #32; 
 deactivate PhotoService
+PhotoService -->> PhotoController : #32; 
 deactivate PhotoService
+PhotoController ->> Photo : new
+activate Photo
+Photo -->> PhotoController : #32; 
+deactivate Photo
+PhotoController ->> Album : new
+activate Album
+Album -->> PhotoController : #32; 
+deactivate Album
+PhotoController ->> PhotoService : savePhoto
+activate PhotoService
+PhotoService -->> PhotoController : #32; 
+deactivate PhotoService
+deactivate PhotoController
 ```
 
 #### 浏览图片
@@ -201,9 +217,13 @@ deactivate PhotoService
 ```mermaid
 sequenceDiagram
 actor User
-User ->> PhotoService : getPhoto
+User ->> PhotoController : getPhoto
+activate PhotoController
+PhotoController ->> PhotoService : getPhoto
 activate PhotoService
+PhotoService -->> PhotoController : #32; 
 deactivate PhotoService
+deactivate PhotoController
 ```
 
 ### 评论管理
@@ -213,9 +233,13 @@ deactivate PhotoService
 ```mermaid
 sequenceDiagram
 actor User
-User ->> CommentService : addComment
+User ->> CommentController : addComment
+activate CommentController
+CommentController ->> CommentService : addComment
 activate CommentService
+CommentService -->> CommentController : #32; 
 deactivate CommentService
+deactivate CommentController
 ```
 
 ## 界面设计
