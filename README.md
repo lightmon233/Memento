@@ -78,22 +78,192 @@ UserService "1" *--> "userRepository 1" UserRepository
 
 #### 用户注册
 
+```mermaid
+sequenceDiagram
+actor User
+User ->> UserController : registerUser
+activate UserController
+UserController ->> User : new
+activate User
+User -->> UserController : #32; 
+deactivate User
+UserController ->> UserService : registerUser
+activate UserService
+UserService ->> UserRepository : existsByUsername
+activate UserRepository
+UserRepository -->> UserService : #32; 
+deactivate UserRepository
+UserService -->> UserController : #32; 
+deactivate UserService
+deactivate UserController
+```
+
 #### 用户登录
+
+```mermaid
+sequenceDiagram
+actor User
+User ->> UserController : loginUser
+activate UserController
+UserController ->> UserService : authenticateUser
+activate UserService
+UserService ->> UserService : findByUsername
+activate UserService
+UserService ->> UserRepository : findByUsername
+activate UserRepository
+UserRepository ->> UserService : () -&gt;
+activate UserService
+UserService -->> UserRepository : #32; 
+deactivate UserService
+UserRepository -->> UserService : #32; 
+deactivate UserRepository
+UserService -->> UserService : #32; 
+deactivate UserService
+UserService -->> UserController : #32; 
+deactivate UserService
+UserController ->> JwtUtil : generateToken
+activate JwtUtil
+JwtUtil -->> UserController : #32; 
+deactivate JwtUtil
+deactivate UserController
+```
 
 ### 相册管理
 
 #### 创建相册
 
+```mermaid
+sequenceDiagram
+actor User
+User ->> AlbumController : createAlbum
+activate AlbumController
+AlbumController ->> User : new
+activate User
+User -->> AlbumController : #32; 
+deactivate User
+AlbumController ->> Album : new
+activate Album
+Album -->> AlbumController : #32; 
+deactivate Album
+AlbumController ->> AlbumService : createAlbum
+activate AlbumService
+AlbumService -->> AlbumController : #32; 
+deactivate AlbumService
+deactivate AlbumController
+```
+
 #### 修改相册
 
+```mermaid
+sequenceDiagram
+actor User
+User ->> AlbumController : updateAlbum
+activate AlbumController
+AlbumController ->> AlbumService : updateAlbum
+activate AlbumService
+AlbumService -->> AlbumController : #32; 
+deactivate AlbumService
+deactivate AlbumController
+```
+
 #### 相册类别管理
+
+```mermaid
+sequenceDiagram
+actor User
+User ->> AlbumController : updateCategory
+activate AlbumController
+AlbumController ->> AlbumService : updateCategory
+activate AlbumService
+AlbumService -->> AlbumController : #32; 
+deactivate AlbumService
+deactivate AlbumController
+```
 
 ### 图片管理
 
 #### 上传图片
 
+```mermaid
+sequenceDiagram
+actor User
+User ->> PhotoService : uploadPhoto
+activate PhotoService
+PhotoService ->> PhotoService : uploadFileToNginx
+activate PhotoService
+PhotoService -->> PhotoService : #32; 
+deactivate PhotoService
+deactivate PhotoService
+```
+
 #### 浏览图片
+
+```mermaid
+sequenceDiagram
+actor User
+User ->> PhotoService : getPhoto
+activate PhotoService
+deactivate PhotoService
+```
 
 ### 评论管理
 
 #### 发表评论
+
+```mermaid
+sequenceDiagram
+actor User
+User ->> CommentService : addComment
+activate CommentService
+deactivate CommentService
+```
+
+## 界面设计
+
+## 非功能设计
+
+## 数据库设计
+
+### E-R图
+```mermaid
+classDiagram
+direction BT
+class albums {
+   varchar(255) category
+   varchar(255) description
+   varchar(255) title
+   bigint user_id
+   bigint id
+}
+class comments {
+   timestamp comment_time
+   varchar(255) content
+   bigint photo_id
+   bigint user_id
+   bigint id
+}
+class photos {
+   varchar(255) description
+   varchar(255) file_path
+   varchar(255) title
+   timestamp upload_time
+   bigint album_id
+   bigint id
+}
+class users {
+   varchar(255) email
+   boolean is_admin
+   varchar(255) password
+   varchar(255) username
+   bigint id
+}
+
+albums  -->  users : user_id:id
+comments  -->  photos : photo_id:id
+comments  -->  users : user_id:id
+photos  -->  albums : album_id:id
+```
+
+### 表设计
+
+
