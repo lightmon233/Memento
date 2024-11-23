@@ -77,7 +77,7 @@ UserService "1" *--> "userRepository 1" UserRepository
 ### 用户管理
 
 #### 用户注册
-
+![registerUser](static/imgs/UserController_registerUser.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -99,7 +99,7 @@ deactivate UserController
 ```
 
 #### 用户登录
-
+![loginUser](static/imgs/UserController_loginUser.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -131,7 +131,7 @@ deactivate UserController
 ### 相册管理
 
 #### 创建相册
-
+![createAlbum](static/imgs/AlbumController_createAlbum.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -153,7 +153,7 @@ deactivate AlbumController
 ```
 
 #### 修改相册
-
+![updateAlbum](static/imgs/AlbumController_updateAlbum.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -167,7 +167,7 @@ deactivate AlbumController
 ```
 
 #### 相册类别管理
-
+![updateCategory](static/imgs/AlbumController_updateCategory.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -183,7 +183,7 @@ deactivate AlbumController
 ### 图片管理
 
 #### 上传图片
-
+![uploadPhoto](static/imgs/PhotoController_uploadPhoto.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -213,7 +213,7 @@ deactivate PhotoController
 ```
 
 #### 浏览图片
-
+![getPhoto](static/imgs/PhotoController_getPhoto.png)
 ```mermaid
 sequenceDiagram
 actor User
@@ -229,7 +229,7 @@ deactivate PhotoController
 ### 评论管理
 
 #### 发表评论
-
+![addComment](static/imgs/CommentController_addComment.png)
 ```mermaid
 sequenceDiagram
 actor User
