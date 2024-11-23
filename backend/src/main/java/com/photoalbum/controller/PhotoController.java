@@ -49,4 +49,17 @@ public class PhotoController {
         photoService.deletePhoto(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPhoto(@PathVariable Long id) {
+        try {
+            Photo photo = photoService.getPhoto(id);
+            if (photo == null) {
+                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok(photo.getUrl());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving photo: " + e.getMessage());
+        }
+    }
 }

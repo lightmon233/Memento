@@ -11,6 +11,20 @@ export const PhotoView: React.FC = () => {
 
   useEffect(() => {
     // TODO: Implement API calls to fetch photo and comments
+    const fetchPhotoUrl = async (id?: string) => {
+      try {
+        const response = await fetch(`/api/photos/${id}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch photo: ${response.status}`);
+        }
+        const photoUrl = await response.text(); // 因为返回的是一个字符串（URL）
+        console.log("Photo URL:", photoUrl);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    fetchPhotoUrl(id); // 替换 123 为需要获取的 Photo ID
   }, [id]);
 
   const handleAddComment = async (content: string) => {

@@ -78,4 +78,8 @@ public class PhotoService {
     public void deletePhoto(Long id) {
         photoRepository.deleteById(id);
     }
+
+    public Photo getPhoto(Long id) {
+        return photoRepository.findById(id).orElse(null);
+    }
 }
