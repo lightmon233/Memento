@@ -38,7 +38,7 @@ public class PhotoController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
     @GetMapping("/album/{albumId}")
     public ResponseEntity<?> getAlbumPhotos(@PathVariable Long albumId) {
         return ResponseEntity.ok(photoService.getAlbumPhotos(albumId));

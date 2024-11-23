@@ -11,8 +11,17 @@ export const PhotoGridView: React.FC = () => {
   useEffect(() => {
     // Fetch photos for the album by album ID
     const fetchPhotos = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
       try {
-        const response = await fetch(`/api/albums/${id}`);
+        const response = await fetch(`/api/photos/album/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        });
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }

@@ -1,5 +1,6 @@
 package com.photoalbum.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,6 +25,7 @@ public class Photo {
     
     @ManyToOne
     @JoinColumn(name = "album_id")
+    @JsonBackReference
     private Album album;
 
     @ManyToOne
