@@ -37,4 +37,15 @@ public class AlbumService {
     public List<Album> getAllAlbums() {
         return albumRepository.findAll();  // 返回所有专辑
     }
+    public void addCategory(String category) {
+        // 业务逻辑：保存类别到数据库
+    }
+
+    public void updateCategory(String oldCategory, String newCategory) {
+        // 业务逻辑：更新类别
+    }
+
+    public void deleteCategory(String category) {
+        // 业务逻辑：删除类别
+    }
 }
