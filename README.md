@@ -5,7 +5,7 @@
 面向对象的电子相册系统旨在为用户提供一个集成照片管理、编辑和互动的数字化平台。用户能够通过系统上传、分类、浏览照片，并进行评论和互动。该系统将提供跨设备的无缝访问，并具有高效、用户友好的界面。
 
 ## 系统结构
-![class](static/imgs/class.png)
+
 ```mermaid
 classDiagram
 direction BT
@@ -166,45 +166,47 @@ sequenceDiagram
     activate UserInterface
     UserInterface->>UserController: 2: registerUser(RegisterRequest)
     activate UserController
-    UserController->>UserService: 3: registerUser(User)
+    UserController->>UserService: 3: registerUser(RegisterRequest)
     activate UserService
-    UserService->>UserRepository: 4: save(User)
+    UserService->>UserService: 4: Create User entity from RegisterRequest
+    UserService->>UserRepository: 5: save(User)
     activate UserRepository
-    UserRepository-->>UserService: 5: User saved
+    UserRepository-->>UserService: 6: User saved
     deactivate UserRepository
-    UserService->>JwtUtil: 6: generateToken(User)
+    UserService->>JwtUtil: 7: generateToken(User)
     activate JwtUtil
-    JwtUtil-->>UserService: 7: JWT Token
+    JwtUtil-->>UserService: 8: JWT Token
     deactivate JwtUtil
-    UserService-->>UserController: 8: User object with token
+    UserService-->>UserController: 9: User object with token
     deactivate UserService
-    UserController-->>UserInterface: 9: Response: User details with token
+    UserController-->>UserInterface: 10: Response: User details with token
     deactivate UserController
-    UserInterface-->>User: 10: Display user info and token
+    UserInterface-->>User: 11: Display user info and token
     deactivate UserInterface
     deactivate User
-    User->>UserInterface: 11: Initiate login
+    User->>UserInterface: 12: Initiate login
     activate User
     activate UserInterface
-    UserInterface->>UserController: 12: loginUser(User)
+    UserInterface->>UserController: 13: loginUser(User)
     activate UserController
-    UserController->>UserService: 13: authenticateUser(username, password)
+    UserController->>UserService: 14: authenticateUser(username, password)
     activate UserService
-    UserService->>UserRepository: 14: findByUsername(username)
+    UserService->>UserRepository: 15: findByUsername(username)
     activate UserRepository
-    UserRepository-->>UserService: 15: User data
+    UserRepository-->>UserService: 16: User data
     deactivate UserRepository
-    UserService-->>UserController: 16: User object
+    UserService-->>UserController: 17: User object
     deactivate UserService
-    UserController->>JwtUtil: 17: generateToken(User)
+    UserController->>JwtUtil: 18: generateToken(User)
     activate JwtUtil
-    JwtUtil-->>UserController: 18: JWT Token
+    JwtUtil-->>UserController: 19: JWT Token
     deactivate JwtUtil
-    UserController-->>UserInterface: 19: Response: Authenticated user with token
+    UserController-->>UserInterface: 20: Response: Authenticated user with token
     deactivate UserController
-    UserInterface-->>User: 20: Display authenticated user info and token
+    UserInterface-->>User: 21: Display authenticated user info and token
     deactivate UserInterface
     deactivate User
+
 ```
 
 
@@ -386,41 +388,46 @@ sequenceDiagram
     participant AlbumController
     participant AlbumService
     participant AlbumRepository
-    
+
     User ->> AlbumInterface: 1: updateCategoryRequest
     activate User
     activate AlbumInterface
-    
-    AlbumInterface ->> AlbumController: 2: updateCategory(oldCategory, newCategory)
-    activate AlbumController
-    
-    AlbumController ->> AlbumService: 3: updateCategory(oldCategory, newCategory)
-    activate AlbumService
-    
-    AlbumService ->> AlbumService: 4: validateCategories()
-    
-    AlbumService ->> AlbumRepository: 5: findByCategory(oldCategory)
-    activate AlbumRepository
-    AlbumRepository -->> AlbumService: 6: albums list
-    deactivate AlbumRepository
-    
-    AlbumService ->> AlbumService: 7: updateAlbumsCategory()
-    
-    AlbumService ->> AlbumRepository: 8: saveAll(updatedAlbums)
-    activate AlbumRepository
-    AlbumRepository -->> AlbumService: 9: saved albums
-    deactivate AlbumRepository
-    
-    AlbumService -->> AlbumController: 10: update result
-    deactivate AlbumService
-    
-    AlbumController -->> AlbumInterface: 11: Response with update status
-    deactivate AlbumController
-    
-    AlbumInterface -->> User: 12: Success response
-    deactivate AlbumInterface
-    deactivate User
 
+    AlbumInterface ->> AlbumInterface: 1.1: checkUserPermission
+    alt User is not Admin
+        AlbumInterface -->> User: 1.2: Permission Denied
+        AlbumInterface ->> User: 1.3: Return to User
+    else
+        AlbumInterface ->> AlbumController: 2: updateCategory(oldCategory, newCategory)
+        activate AlbumController
+
+        AlbumController ->> AlbumService: 3: updateCategory(oldCategory, newCategory)
+        activate AlbumService
+
+        AlbumService ->> AlbumService: 4: validateCategories()
+
+        AlbumService ->> AlbumRepository: 5: findByCategory(oldCategory)
+        activate AlbumRepository
+        AlbumRepository -->> AlbumService: 6: albums list
+        deactivate AlbumRepository
+
+        AlbumService ->> AlbumService: 7: updateAlbumsCategory()
+
+        AlbumService ->> AlbumRepository: 8: saveAll(updatedAlbums)
+        activate AlbumRepository
+        AlbumRepository -->> AlbumService: 9: saved albums
+        deactivate AlbumRepository
+
+        AlbumService -->> AlbumController: 10: update result
+        deactivate AlbumService
+
+        AlbumController -->> AlbumInterface: 11: Response with update status
+        deactivate AlbumController
+
+        AlbumInterface -->> User: 12: Success response
+        deactivate AlbumInterface
+        deactivate User
+    end
 ```
 
 ### 图片管理
@@ -585,18 +592,141 @@ sequenceDiagram
 
 ### 评论管理
 
+```mermaid
+classDiagram
+%% Comment模块的依赖关系和继承外部模块的关系
+
+%% CommentController类
+class CommentController {
+    +addComment(comment: Comment): ResponseEntity<?>
+    +getPhotoComments(photoId: Long): ResponseEntity<?>
+}
+CommentController --> CommentService : "使用"
+
+%% CommentService类
+class CommentService {
+    +getPhotoComments(photoId: Long): List<Comment>
+    +addComment(comment: Comment): Comment
+}
+CommentService --> CommentRepository : "访问"
+CommentService --> Comment : "操作"
+
+%% Comment类
+class Comment {
+    -id: Long
+    -content: String
+    -commentTime: LocalDateTime
+    -user: User
+    -photo: Photo
+    +toString(): String
+    +equals(object: Object): boolean
+    +hashCode(): int
+}
+Comment --> Photo : "属于"
+Comment --> User : "由用户创建"
+
+%% CommentRepository接口
+class CommentRepository {
+    <<Interface>>
+    +findByPhotoId(photoId: Long): List<Comment>
+}
+CommentService --> CommentRepository : "使用"
+
+%% 关联模块关系
+class Photo {
+    -id: Long
+    -url: String
+    -album: Album
+    -comments: List<Comment>
+    -user: User
+    -title: String
+    -createdAt: LocalDateTime
+    +toString(): String
+    +equals(object: Object): boolean
+    +hashCode(): int
+}
+Comment --> Photo : "属于"
+
+class User {
+    -id: Long
+    -username: String
+    -password: String
+    -email: String
+    -createdAt: LocalDateTime
+    -isAdmin: Boolean
+    +toString(): String
+    +hashCode(): int
+    +equals(object: Object): boolean
+}
+Comment --> User : "由用户创建"
+
+```
+
 #### 发表评论
-![addComment](static/imgs/CommentController_addComment.png)
+
 ```mermaid
 sequenceDiagram
-actor User
-User ->> CommentController : addComment
-activate CommentController
-CommentController ->> CommentService : addComment
-activate CommentService
-CommentService -->> CommentController : #32; 
-deactivate CommentService
-deactivate CommentController
+    actor User as :User
+    participant CommentInterface as :CommentInterface
+    participant CommentController as :CommentController
+    participant CommentService as :CommentService
+    participant CommentRepository as :CommentRepository
+    participant Comment as :Comment
+
+    User->>CommentInterface: 1: Initiate add comment
+    activate User
+    activate CommentInterface
+    CommentInterface->>CommentController: 2: addComment(AddCommentRequest)
+    activate CommentController
+    CommentController->>CommentService: 3: addComment(Comment)
+    activate CommentService
+    CommentService->>Comment: 4: Create Comment entity (populate fields using Comment class)
+    activate Comment
+    Comment-->>CommentService: 4.1: Return Comment entity
+    deactivate Comment
+    CommentService->>CommentRepository: 5: save(Comment)
+    activate CommentRepository
+    CommentRepository-->>CommentService: 6: Comment saved with ID
+    deactivate CommentRepository
+    CommentService-->>CommentController: 7: Comment object with ID
+    deactivate CommentService
+    CommentController-->>CommentInterface: 8: Response: Comment details with ID
+    deactivate CommentController
+    CommentInterface-->>User: 9: Display comment info and ID
+    deactivate CommentInterface
+    deactivate User
+
+```
+
+#### 获取图片评论
+
+```mermaid
+sequenceDiagram
+    actor User as :User
+    participant CommentInterface as :CommentInterface
+    participant CommentController as :CommentController
+    participant CommentService as :CommentService
+    participant CommentRepository as :CommentRepository
+    
+    User->>CommentInterface: 1: Initiate get photo comment
+    activate User
+    activate CommentInterface
+    CommentInterface->>CommentController: 2: getPhotoComment(photoId)
+    activate CommentController
+    CommentController->>CommentService: 3: getPhotoComment(photoId)
+    activate CommentService
+    CommentService->>CommentRepository: 4: findCommentsByPhotoId(photoId)
+    activate CommentRepository
+    CommentRepository-->>CommentService: 5: Comments found
+    deactivate CommentRepository
+    CommentService-->>CommentController: 6: List of comments
+    deactivate CommentService
+    CommentController-->>CommentInterface: 7: Response: List of comments
+    deactivate CommentController
+    CommentInterface-->>User: 8: Display list of comments
+    deactivate CommentInterface
+    deactivate User
+
 ```
 
 ## 界面设计
@@ -606,47 +736,55 @@ deactivate CommentController
 ## 数据库设计
 
 ### E-R图
-![tables](static/imgs/tables.png)
 
-<!-- ```mermaid -->
-<!-- classDiagram -->
-<!-- direction BT -->
-<!-- class albums { -->
-<!--    varchar(255) category -->
-<!--    varchar(255) description -->
-<!--    varchar(255) title -->
-<!--    bigint user_id -->
-<!--    bigint id -->
-<!-- } -->
-<!-- class comments { -->
-<!--    timestamp comment_time -->
-<!--    varchar(255) content -->
-<!--    bigint photo_id -->
-<!--    bigint user_id -->
-<!--    bigint id -->
-<!-- } -->
-<!-- class photos { -->
-<!--    varchar(255) description -->
-<!--    varchar(255) file_path -->
-<!--    varchar(255) title -->
-<!--    timestamp upload_time -->
-<!--    bigint album_id -->
-<!--    bigint id -->
-<!-- } -->
-<!-- class users { -->
-<!--    varchar(255) email -->
-<!--    boolean is_admin -->
-<!--    varchar(255) password -->
-<!--    varchar(255) username -->
-<!--    bigint id -->
-<!-- } -->
-<!---->
-<!-- albums  -->  users : user_id:id -->
-<!-- comments  -->  photos : photo_id:id -->
-<!-- comments  -->  users : user_id:id -->
-<!-- photos  -->  albums : album_id:id -->
-<!-- ``` -->
+```mermaid
+classDiagram
+direction BT
+class albums {
+   +category: varchar(255)
+   +description: varchar(255)
+   +title: varchar(255)
+   +user_id: bigint
+   +id: bigint
+}
+class comments {
+   +comment_time: timestamp
+   +content: varchar(255)
+   +photo_id: bigint
+   +user_id: bigint
+   +id: bigint
+}
+class photos {
+   +description: varchar(255)
+   +file_path: varchar(255)
+   +title: varchar(255)
+   +upload_time: timestamp
+   +album_id: bigint
+   +id: bigint
+}
+class users {
+   +email: varchar(255)
+   +is_admin: boolean
+   +password: varchar(255)
+   +username: varchar(255)
+   +id: bigint
+}
+
+albums  -->  users : user_id to id
+comments  -->  photos : photo_id to id
+comments  -->  users : user_id to id
+photos  -->  albums : album_id to id
+```
 
 ### 表设计
 
+#### 用户表
 
+| 表字段 | 类型 | 中文名 | 备注 | 默认值 | 是否非空 |
+| --- | --- | --- | --- | --- | --- |
+| id | bigserial | 用户ID | 主键 | nextval('users_id_seq'::regclass) | 是 |
+| created_at | timestamp | 创建时间 | | | 是 |
+| email | varchar(255) | 邮箱 | | | 否 |
+| is_admin | bool | 是否管理员 | | false | 是 |
+| password | varchar(255) | 密码 | | | 是 |
+| username | varchar(255) | 用户名 | | | 是 |
