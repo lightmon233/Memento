@@ -786,5 +786,38 @@ photos  -->  albums : album_id to id
 | created_at | timestamp | 创建时间 | | | 是 |
 | email | varchar(255) | 邮箱 | | | 否 |
 | is_admin | bool | 是否管理员 | | false | 是 |
-| password | varchar(255) | 密码 | | | 是 |
-| username | varchar(255) | 用户名 | | | 是 |
+| password | varchar(255) | 密码 | | | 否 |
+| username | varchar(255) | 用户名 | | | 否 |
+
+#### 相册表
+
+| 表字段 | 类型 | 中文名 | 备注 | 默认值 | 是否非空 |
+| --- | --- | --- | --- | --- | --- |
+| id | bigserial | 相册ID | 主键 | nextval('albums_id_seq'::regclass) | 是 |
+| category | varchar(255) | 相册类别 | | | 否 |
+| created_at | timestamp | 创建时间 | | | 否 |
+| description | varchar(255) | 相册描述 | | | 否 |
+| title | varchar(255) | 相册标题 | | | 否 |
+| updated_at | timestamp | 更新时间 | | | 否 |
+| user_id | int8 | 用户ID | 外键 | | 否 |
+
+#### 图片表
+
+| 表字段 | 类型 | 中文名 | 备注 | 默认值 | 是否非空 |
+| --- | --- | --- | --- | --- | --- |
+| id | bigserial | 图片ID | 主键 | nextval('photos_id_seq'::regclass) | 是 |
+| created_at | timestamp | 创建时间 | | | 否 |
+| title | varchar(255) | 图片标题 | | | 否 |
+| url | varchar(255) | 图片URL | | | 否 |
+| album_id | int8 | 相册ID | 外键 | | 否 |
+| user_id | int8 | 用户ID | 外键 | | 否 |
+
+#### 评论表
+
+| 表字段 | 类型 | 中文名 | 备注 | 默认值 | 是否非空 |
+| --- | --- | --- | --- | --- | --- |
+| id | bigserial | 评论ID | 主键 | nextval('comments_id_seq'::regclass) | 是 |
+| comment_time | timestamp | 评论时间 | | | 否 |
+| content | varchar(255) | 评论内容 | | | 否 |
+| photo_id | int8 | 图片ID | 外键 | | 否 |
+| user_id | int8 | 用户ID | 外键 | | 否 |
