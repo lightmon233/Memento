@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PhotoGrid } from '../components/PhotoGrid';
 import { Photo } from '../types';
+import { Plus } from 'lucide-react';
 
 export const PhotoGridView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -78,21 +79,24 @@ export const PhotoGridView: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Photos in Album {id}</h1>
-      <div className="mb-4">
-        <label
-          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-700"
-          htmlFor="photoUpload"
-        >
-          {uploading ? "Uploading..." : "Upload Photo"}
-        </label>
-        <input
-          id="photoUpload"
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Photos in Album {id}</h1>
+        <div>
+          <label
+            htmlFor="photoUpload"
+            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            {uploading ? "Uploading..." : "Upload Photo"}
+          </label>
+          <input
+            id="photoUpload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+        </div>
       </div>
       <PhotoGrid
         photos={photos}
