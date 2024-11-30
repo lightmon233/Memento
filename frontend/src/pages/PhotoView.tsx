@@ -11,20 +11,32 @@ export const PhotoView: React.FC = () => {
 
   useEffect(() => {
     // TODO: Implement API calls to fetch photo and comments
-    const fetchPhotoUrl = async (id?: string) => {
+    const fetchPhoto = async (id?: string) => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
       try {
-        const response = await fetch(`/api/photos/${id}`);
+        const response = await fetch(`/api/photos/${id}`, {
+          method: 'GET',
+          headers: {
+            // Authorization是属性名，可加引号也可不加，只有属性名中有特殊字符时才必须要加引号
+            Authorization: `Bearer ${token}`,
+          }
+        });
         if (!response.ok) {
           throw new Error(`Failed to fetch photo: ${response.status}`);
         }
-        const photoUrl = await response.text(); // 因为返回的是一个字符串（URL）
-        console.log("Photo URL:", photoUrl);
+        const photo = await response.json(); 
+        console.log("Photo:", photo);
+        setPhoto(photo);
       } catch (error) {
         console.error(error);
       }
     };
     
-    fetchPhotoUrl(id); // 替换 123 为需要获取的 Photo ID
+    fetchPhoto(id); // 替换 123 为需要获取的 Photo ID
   }, [id]);
 
   const handleAddComment = async (content: string) => {

@@ -58,7 +58,7 @@ public class PhotoController {
             if (photo == null) {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(photo.getUrl()); // 返回 Photo 的 URL
+            return ResponseEntity.ok(photo);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving photo: " + e.getMessage());
         }
