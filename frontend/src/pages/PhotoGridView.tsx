@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { PhotoGrid } from '../components/PhotoGrid';
 import { Photo } from '../types';
 import { Plus } from 'lucide-react';
 
 export const PhotoGridView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [uploading, setUploading] = useState(false);
 
@@ -77,6 +78,11 @@ export const PhotoGridView: React.FC = () => {
     }
   };
 
+  const handlePhotoClick = (photo: Photo) => {
+    console.log("Photo clicked:", photo);
+    navigate(`/photos/${photo.id}`);
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -100,10 +106,7 @@ export const PhotoGridView: React.FC = () => {
       </div>
       <PhotoGrid
         photos={photos}
-        onPhotoClick={(photo) => {
-          console.log("Photo clicked:", photo);
-          // Add any additional logic for clicking a photo
-        }}
+        onPhotoClick={handlePhotoClick}
       />
     </div>
   );
