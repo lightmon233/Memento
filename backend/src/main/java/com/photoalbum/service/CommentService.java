@@ -14,7 +14,6 @@ public class CommentService {
     private CommentRepository commentRepository;
     
     public Comment addComment(Comment comment) {
-        comment.setCommentTime(LocalDateTime.now());
         return commentRepository.save(comment);
     }
     

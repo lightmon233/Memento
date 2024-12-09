@@ -1,6 +1,7 @@
 package com.photoalbum.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,5 +34,6 @@ public class Photo {
     private User user;
     
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Comment> comments;
 }

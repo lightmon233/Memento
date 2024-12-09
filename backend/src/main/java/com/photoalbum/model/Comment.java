@@ -1,6 +1,9 @@
 package com.photoalbum.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,13 +16,13 @@ public class Comment {
     private Long id;
     
     private String content;
-    private LocalDateTime commentTime;
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-    
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name = "photo_id")
+    @JsonBackReference
     private Photo photo;
 }

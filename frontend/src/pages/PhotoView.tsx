@@ -36,11 +36,66 @@ export const PhotoView: React.FC = () => {
       }
     };
     
+    // 获取评论
+    const fetchComments = async (photoId: string) => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
+      try {
+        const response = await fetch(`/api/comments/photo/${photoId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch comments: ${response.status}`);
+        }
+        const comments = await response.json();
+        console.log(comments);
+        // setComments(comments);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    
     fetchPhoto(id); // 替换 123 为需要获取的 Photo ID
+    if (id) fetchComments(id);
   }, [id]);
 
   const handleAddComment = async (content: string) => {
     // TODO: Implement add comment functionality
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error("No token found!");
+      return;
+    }
+
+    const requestBody = {
+      content: content,
+      photoId: id,
+    };
+    
+    try {
+      const response = await fetch(`/api/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to add comment: ${response.statusText}`);
+      }
+      const addedComment = await response.json();
+      setComments(prevComments => [...prevComments, addedComment]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (!photo) {
