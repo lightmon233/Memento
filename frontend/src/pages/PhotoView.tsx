@@ -55,7 +55,7 @@ export const PhotoView: React.FC = () => {
         }
         const comments = await response.json();
         console.log(comments);
-        // setComments(comments);
+        setComments(comments);
       } catch (error) {
         console.error(error);
       }
