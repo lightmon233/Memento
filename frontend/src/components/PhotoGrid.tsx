@@ -1,13 +1,14 @@
 import React from 'react';
 import { Photo } from '../types';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle, Trash2 } from 'lucide-react';
 
 interface PhotoGridProps {
   photos: Photo[];
   onPhotoClick: (photo: Photo) => void;
+  onDeletePhoto: (photoId: number) => void;
 }
 
-export const PhotoGrid: React.FC<PhotoGridProps> = ({ photos, onPhotoClick }) => {
+export const PhotoGrid: React.FC<PhotoGridProps> = ({ photos, onPhotoClick, onDeletePhoto }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {photos.map((photo) => (
@@ -37,6 +38,16 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({ photos, onPhotoClick }) =>
               </div>
             </div>
           </div>
+          {/* 添加删除按钮 */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // 阻止事件冒泡
+              onDeletePhoto(photo.id);
+            }}
+            className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700 focus:outline-none"
+          >
+            <Trash2 className="h-5 w-5"/>
+          </button>
         </div>
       ))}
     </div>

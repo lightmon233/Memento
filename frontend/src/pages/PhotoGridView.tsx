@@ -83,6 +83,31 @@ export const PhotoGridView: React.FC = () => {
     navigate(`/photos/${photo.id}`);
   }
 
+  const handleDeletePhoto = async (photoId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error("No token found!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/photos/${photoId}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.statusText}`);
+      }
+      setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo.id !== photoId));
+      alert("Photo deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete photo:", error);
+      alert("Failed to delete photo.");
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -107,6 +132,7 @@ export const PhotoGridView: React.FC = () => {
       <PhotoGrid
         photos={photos}
         onPhotoClick={handlePhotoClick}
+        onDeletePhoto={handleDeletePhoto}
       />
     </div>
   );
