@@ -32,6 +32,10 @@ public class AlbumService {
         List<Album> albums = albumRepository.findByUserId(userId);
         return albums != null ? albums : Collections.emptyList();
     }
+
+    public Album getAlbum(Long id) {
+        return albumRepository.findById(id).orElse(null);
+    }
     
     public List<Album> getAlbumsByCategory(String category) {
         return albumRepository.findByCategory(category);

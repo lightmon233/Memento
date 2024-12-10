@@ -50,6 +50,15 @@ public class AlbumController {
         albumService.deleteAlbum(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAlbum(@PathVariable Long id) {
+        Album album = albumService.getAlbum(id);
+        if (album == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(album);
+    }
     
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserAlbums(@PathVariable Long userId) {

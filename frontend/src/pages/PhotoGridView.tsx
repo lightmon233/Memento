@@ -13,7 +13,28 @@ export const PhotoGridView: React.FC = () => {
 
   useEffect(() => {
     // 获取相册信息
-    const 
+    const fetchAlbumInfo = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
+      try {
+        const response = await fetch(`/api/albums/${id}`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        })
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const albumData = await response.json();
+        setAlbumName(albumData.title);
+      } catch (error) {
+        console.error("Failed to fetch album info:", error);
+      }
+    }
     // Fetch photos for the album by album ID
     const fetchPhotos = async () => {
       const token = localStorage.getItem('token');
@@ -37,6 +58,7 @@ export const PhotoGridView: React.FC = () => {
       }
     };
 
+    fetchAlbumInfo();
     fetchPhotos();
   }, [id]);
 
@@ -114,7 +136,7 @@ export const PhotoGridView: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Photos in Album {id}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Photos in Album {albumName || id}</h1>
         <div>
           <label
             htmlFor="photoUpload"
