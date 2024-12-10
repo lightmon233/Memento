@@ -103,8 +103,14 @@ export const PhotoView: React.FC = () => {
       if (!response.ok) {
         throw new Error(`Failed to add comment: ${response.statusText}`);
       }
-      const addedComment = await response.json();
-      setComments(prevComments => [...prevComments, addedComment]);
+      const addedcomment = await response.json();
+      console.log(addedcomment.user.username);
+      const commentWithUserName = {
+        ...addedcomment,
+        userId: addedcomment.user.id
+      }
+      console.log(commentWithUserName)
+      setComments(prevcomments => [...prevcomments, commentWithUserName]);
     } catch (error) {
       console.error(error);
     }
