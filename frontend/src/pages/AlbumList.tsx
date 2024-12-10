@@ -99,6 +99,31 @@ export const AlbumList: React.FC = () => {
     setShowCreateModal(true);
   };
 
+  const handleDeleteAlbum = async (albumId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error("No token found!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/albums/${albumId}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.statusText}`);
+      }
+      setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== albumId));
+      alert("Album deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete photo:", error);
+      alert("Failed to delete photo.");
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -120,6 +145,7 @@ export const AlbumList: React.FC = () => {
             key={album.id}
             album={album}
             onEdit={() => handleOpenEditModal(album)}
+            onDeleteAlbum={handleDeleteAlbum}
           />
         ))}
       </div>

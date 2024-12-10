@@ -9,8 +9,11 @@ export const PhotoGridView: React.FC = () => {
   const navigate = useNavigate();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [albumName, setAlbumName] = useState<string>('');
 
   useEffect(() => {
+    // 获取相册信息
+    const 
     // Fetch photos for the album by album ID
     const fetchPhotos = async () => {
       const token = localStorage.getItem('token');

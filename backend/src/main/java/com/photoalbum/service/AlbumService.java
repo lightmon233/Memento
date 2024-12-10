@@ -23,6 +23,10 @@ public class AlbumService {
         }
         return albumRepository.save(album);
     }
+
+    public void deleteAlbum(Long id) {
+        albumRepository.deleteById(id);
+    }
     
     public List<Album> getUserAlbums(Long userId) {
         List<Album> albums = albumRepository.findByUserId(userId);
