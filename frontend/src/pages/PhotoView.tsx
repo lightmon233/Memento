@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom';
 import { Photo, Comment } from '../types';
 import { CommentSection } from '../components/CommentSection';
 import { Heart, Share2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const PhotoView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
 
@@ -54,8 +56,12 @@ export const PhotoView: React.FC = () => {
           throw new Error(`Failed to fetch comments: ${response.status}`);
         }
         const comments = await response.json();
-        console.log(comments);
-        setComments(comments);
+        const commentsWithUserName = comments.map(comment => ({
+          ...comment,
+          userId: comment.user.username
+        }));
+        console.log(commentsWithUserName);
+        setComments(commentsWithUserName);
       } catch (error) {
         console.error(error);
       }
@@ -74,9 +80,15 @@ export const PhotoView: React.FC = () => {
       return;
     }
 
+    // // 解码token中的用户id
+    // const tokenPayload = token.split('.')[1];
+    // const decodedPayload = JSON.parse(atob(tokenPayload));
+    // const userId = decodedPayload.id;
+
     const requestBody = {
       content: content,
       photoId: id,
+      userId: user?.id,
     };
     
     try {

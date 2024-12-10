@@ -7,5 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class PhotoRequest {
     private String title;
     private Long albumId;
+    private Long userId;
     private MultipartFile file;
 }

@@ -3,6 +3,7 @@ package com.photoalbum.controller;
 import com.photoalbum.dto.CommentRequest;
 import com.photoalbum.model.Comment;
 import com.photoalbum.model.Photo;
+import com.photoalbum.model.User;
 import com.photoalbum.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,11 @@ public class CommentController {
         Photo photo = new Photo();
         photo.setId(request.getPhotoId());
         Comment comment = new Comment();
+        User user = new User();
+        user.setId(request.getUserId());
         comment.setContent(request.getContent());
         comment.setPhoto(photo);
+        comment.setUser(user);
         return ResponseEntity.ok(commentService.addComment(comment));
     }
     

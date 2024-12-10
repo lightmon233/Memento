@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PhotoGrid } from '../components/PhotoGrid';
 import { Photo } from '../types';
 import { Plus } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const PhotoGridView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +11,7 @@ export const PhotoGridView: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [uploading, setUploading] = useState(false);
   const [albumName, setAlbumName] = useState<string>('');
+  const { user } = useAuth();
 
   useEffect(() => {
     // 获取相册信息
@@ -70,6 +72,7 @@ export const PhotoGridView: React.FC = () => {
     formData.append("file", file);
     formData.append("albumId", id!);
     formData.append("title", file.name); // 将文件名作为title传递
+    formData.append("userId", String(user?.id));
 
     const token = localStorage.getItem('token');
 

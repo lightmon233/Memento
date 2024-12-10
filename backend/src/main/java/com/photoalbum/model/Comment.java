@@ -22,6 +22,10 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "photo_id")
     @JsonBackReference
     private Photo photo;

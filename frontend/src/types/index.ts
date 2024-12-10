@@ -28,9 +28,8 @@ export interface Photo {
 export interface Comment {
   id: number;
   content: string;
-  photoId: number;
   userId: number;
-  username: string;
+  photoId: number;
   createdAt: string;
 }
 

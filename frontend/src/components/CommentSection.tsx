@@ -51,7 +51,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         {comments.map((comment) => (
           <div key={comment.id} className="bg-white p-4 rounded-lg shadow">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium text-gray-900">{comment.username}</span>
+              <span className="font-medium text-gray-900">{comment.userId}</span>
               <span className="text-sm text-gray-500">
                 {format(new Date(comment.createdAt), 'MMM d, yyyy')}
               </span>

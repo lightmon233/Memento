@@ -3,6 +3,7 @@ package com.photoalbum.controller;
 import com.photoalbum.dto.PhotoRequest;
 import com.photoalbum.model.Album;
 import com.photoalbum.model.Photo;
+import com.photoalbum.model.User;
 import com.photoalbum.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,11 @@ public class PhotoController {
         photo.setTitle(photoRequest.getTitle());
         Album album = new Album();
         album.setId(photoRequest.getAlbumId());
+        User user = new User();
+        user.setId(photoRequest.getUserId());
         photo.setAlbum(album);
         photo.setUrl(url);
+        photo.setUser(user);
         try {
             return ResponseEntity.ok(photoService.savePhoto(photo));
         } catch (Exception e) {
