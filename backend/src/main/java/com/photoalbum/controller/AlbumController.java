@@ -1,6 +1,7 @@
 package com.photoalbum.controller;
 
 import com.photoalbum.dto.AlbumRequest;
+import com.photoalbum.dto.AlbumSettingsRequest;
 import com.photoalbum.model.Album;
 import com.photoalbum.model.User;
 import com.photoalbum.service.AlbumService;
@@ -31,7 +32,7 @@ public class AlbumController {
         album.setCategory(request.getCategory());
         album.setUser(user); // 设置user用户
         // 保存album
-        return ResponseEntity.ok(albumService.createAlbum(album));
+        return ResponseEntity.ok(albumService.createAlbum(album, request.getUserId()));
     }
 
     @GetMapping
@@ -42,14 +43,21 @@ public class AlbumController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAlbum(@PathVariable Long id, @RequestBody Album album) {
         album.setId(id);
-        return ResponseEntity.ok(albumService.updateAlbum(album));
+        return ResponseEntity.ok(albumService.updateAlbum(album,id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAlbum(@PathVariable Long id) {
-        albumService.deleteAlbum(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{albumId}")
+    public ResponseEntity<?> deleteAlbum(@PathVariable Long albumId, @RequestParam Long userId) {
+        try {
+            albumService.deleteAlbum(albumId, userId);  // 删除相册时检查用户ID
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting album: " + e.getMessage());
+        }
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAlbum(@PathVariable Long id) {
@@ -112,4 +120,16 @@ public class AlbumController {
                     .body(Collections.singletonMap("error", "Failed to delete category."));
         }
     }
+    @PutMapping("/{id}/settings")
+    public ResponseEntity<?> updateAlbumSettings(@PathVariable Long id, @RequestBody AlbumSettingsRequest settingsRequest) {
+        try {
+            Album updatedAlbum = albumService.updateAlbumSettings(id, settingsRequest);
+            return ResponseEntity.ok(updatedAlbum);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating album settings.");
+        }
+    }
+
+
+
 }
