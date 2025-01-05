@@ -169,63 +169,75 @@ UserService --> UserRepository : "依赖"
 UserController --> UserRepository : "调用"
 ```
 
-#### 用户注册&登录
+#### 用户注册
 
 ```mermaid
 sequenceDiagram
-    actor User as :User
-    participant UserInterface as :UserInterface
+    actor User 
     participant UserController as :UserController
     participant UserService as :UserService
     participant UserRepository as :UserRepository
-    participant JwtUtil as :JwtUtil
-    User->>UserInterface: 1: Initiate registration/login
+    participant UserEntity as :User
+
+    User->>UserController: 1: Initiate registration
     activate User
-    activate UserInterface
-    UserInterface->>UserController: 2: registerUser(RegisterRequest)
     activate UserController
-    UserController->>UserService: 3: registerUser(RegisterRequest)
+    Note right of User: Brief delay
+    deactivate User
+    UserController->>UserService: 2: registerUser(RegisterRequest)
     activate UserService
-    UserService->>UserService: 4: Create User entity from RegisterRequest
+    Note right of UserController: Brief delay
+    deactivate UserController
+    UserService->>UserEntity: 3: Create User entity from RegisterRequest
+    activate UserEntity
+    UserEntity->>UserService: 4: User entity returned
+    deactivate UserEntity
     UserService->>UserRepository: 5: save(User)
     activate UserRepository
     UserRepository-->>UserService: 6: User saved
     deactivate UserRepository
-    UserService->>JwtUtil: 7: generateToken(User)
-    activate JwtUtil
-    JwtUtil-->>UserService: 8: JWT Token
-    deactivate JwtUtil
-    UserService-->>UserController: 9: User object with token
+    UserService-->>UserController: 7: User object with token
     deactivate UserService
-    UserController-->>UserInterface: 10: Response: User details with token
-    deactivate UserController
-    UserInterface-->>User: 11: Display user info and token
-    deactivate UserInterface
-    deactivate User
-    User->>UserInterface: 12: Initiate login
-    activate User
-    activate UserInterface
-    UserInterface->>UserController: 13: loginUser(User)
     activate UserController
-    UserController->>UserService: 14: authenticateUser(username, password)
-    activate UserService
-    UserService->>UserRepository: 15: findByUsername(username)
-    activate UserRepository
-    UserRepository-->>UserService: 16: User data
-    deactivate UserRepository
-    UserService-->>UserController: 17: User object
-    deactivate UserService
-    UserController->>JwtUtil: 18: generateToken(User)
-    activate JwtUtil
-    JwtUtil-->>UserController: 19: JWT Token
-    deactivate JwtUtil
-    UserController-->>UserInterface: 20: Response: Authenticated user with token
-    deactivate UserController
-    UserInterface-->>User: 21: Display authenticated user info and token
-    deactivate UserInterface
-    deactivate User
-
+    UserController-->>User: 8: Response: User details with token
+	deactivate UserController
+	activate User
+	Note right of User: Brief delay
+	deactivate User
 ```
+
+#### 用户登录
+
+```mermaid
+sequenceDiagram
+    actor User 
+    participant UserController as :UserController
+    participant UserService as :UserService
+    participant UserRepository as :UserRepository
+    
+    User->>UserController: 1: Initiate login
+    activate User
+    activate UserController
+    Note right of User: Brief delay
+    deactivate User
+    UserController->>UserService: 2: authenticateUser(username, password)
+    activate UserService
+    Note right of UserController: Brief delay
+    deactivate UserController
+    UserService->>UserRepository: 3: findByUsername(username)
+    activate UserRepository
+    UserRepository-->>UserService: 4: User data
+    deactivate UserRepository
+    UserService-->>UserController: 5: User object
+    deactivate UserService
+    activate UserController
+    UserController-->>User: 6: Response: Authenticated user with token
+    deactivate UserController
+    activate User
+    Note right of User: Brief delay
+    deactivate User
+```
+
 用户注册和登录的流程如上所示，用户首先通过用户界面发起注册或登录请求，然后由用户控制器将请求转发给用户服务。用户服务将处理注册或登录请求，并将用户信息保存到数据库中。注册成功后，用户服务将生成一个JWT令牌，并返回给用户控制器。用户控制器将JWT令牌返回给用户界面，用户界面将显示用户信息和令牌。登录过程类似，但是用户服务将验证用户的用户名和密码，然后生成JWT令牌。
 
 ### 相册管理
@@ -282,43 +294,38 @@ AlbumService --> AlbumRepository : "依赖"
 
 ```mermaid
 sequenceDiagram
-    actor User
-    participant AlbumInterface
-    participant AlbumController
-    participant AlbumService
-    participant AlbumRepository
-    
-    User ->> AlbumInterface: 1: createAlbumRequest
+    actor User 
+    participant AlbumController as :AlbumController
+    participant AlbumService as :AlbumService
+    participant AlbumRepository as :AlbumRepository
+    participant Album as :Album
+
+    User->>AlbumController: 1: createAlbumRequest
     activate User
-    activate AlbumInterface
-    
-    AlbumInterface ->> AlbumController: 2: createAlbum(albumRequest)
     activate AlbumController
-    
-    AlbumController ->> AlbumService: 3: createAlbum(albumRequest)
-    activate AlbumService
-    
-    AlbumService ->> AlbumService: 4: validateRequest()
-    
-    AlbumService ->> Album: 5: new Album()
-    activate Album
-    Album -->> AlbumService: 6: album object
-    deactivate Album
-    
-    AlbumService ->> AlbumRepository: 7: save(album)
-    activate AlbumRepository
-    AlbumRepository -->> AlbumService: 8: saved album
-    deactivate AlbumRepository
-    
-    AlbumService -->> AlbumController: 9: album object
-    deactivate AlbumService
-    
-    AlbumController -->> AlbumInterface: 10: Response with album details
-    deactivate AlbumController
-    
-    AlbumInterface -->> User: 11: Success response
-    deactivate AlbumInterface
+    Note right of User: Brief delay
     deactivate User
+    AlbumController->>AlbumService: 2: createAlbum(albumRequest)
+    activate AlbumService
+    Note right of AlbumController: Brief delay
+    deactivate AlbumController
+    AlbumService->>AlbumService: 3: validateRequest()
+    AlbumService->>Album: 4: new Album()
+    activate Album
+    Album-->>AlbumService: 5: album object
+    deactivate Album
+    AlbumService->>AlbumRepository: 6: save(album)
+    activate AlbumRepository
+    AlbumRepository-->>AlbumService: 7: saved album
+    deactivate AlbumRepository
+    AlbumService-->>AlbumController: 8: album object
+    deactivate AlbumService
+    activate AlbumController
+    AlbumController-->>User: 9: Success response
+    deactivate AlbumController
+	activate User
+	Note right of User: Brief delay
+	deactivate User
 ```
 创建相册的流程如上所示，用户首先通过用户界面发起创建相册请求，然后由相册控制器将请求转发给相册服务。相册服务将处理创建相册请求，并将相册信息保存到数据库中。创建成功后，相册服务将返回相册对象给相册控制器。相册控制器将返回相册对象给用户界面，用户界面将显示相册信息。
 
@@ -326,46 +333,38 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor User
-    participant AlbumInterface
-    participant AlbumController
-    participant AlbumService
-    participant AlbumRepository
-    
-    User ->> AlbumInterface: 1: updateAlbumRequest
-    activate User
-    activate AlbumInterface
-    
-    AlbumInterface ->> AlbumController: 2: updateAlbum(albumRequest)
-    activate AlbumController
-    
-    AlbumController ->> AlbumService: 3: updateAlbum(albumRequest)
-    activate AlbumService
-    
-    AlbumService ->> AlbumService: 4: validateRequest()
-    
-    AlbumService ->> AlbumRepository: 5: findById(albumId)
-    activate AlbumRepository
-    AlbumRepository -->> AlbumService: 6: existing album
-    deactivate AlbumRepository
-    
-    AlbumService ->> AlbumService: 7: updateAlbumFields()
-    
-    AlbumService ->> AlbumRepository: 8: save(updatedAlbum)
-    activate AlbumRepository
-    AlbumRepository -->> AlbumService: 9: saved album
-    deactivate AlbumRepository
-    
-    AlbumService -->> AlbumController: 10: updated album
-    deactivate AlbumService
-    
-    AlbumController -->> AlbumInterface: 11: Response with updated album
-    deactivate AlbumController
-    
-    AlbumInterface -->> User: 12: Success response
-    deactivate AlbumInterface
-    deactivate User
+    actor User 
+    participant AlbumController as :AlbumController
+    participant AlbumService as :AlbumService
+    participant AlbumRepository as :AlbumRepository
 
+    User->>AlbumController: 1: updateAlbumRequest
+    activate User
+    activate AlbumController
+    Note right of User: Brief delay
+    deactivate User
+    AlbumController->>AlbumService: 2: updateAlbum(albumRequest)
+    activate AlbumService
+    Note right of AlbumController: Brief delay
+    deactivate AlbumController
+    AlbumService->>AlbumService: 3: validateRequest()
+    AlbumService->>AlbumRepository: 4: findById(albumId)
+    activate AlbumRepository
+    AlbumRepository-->>AlbumService: 5: existing album
+    deactivate AlbumRepository
+    AlbumService->>AlbumService: 6: updateAlbumFields()
+    AlbumService->>AlbumRepository: 7: save(updatedAlbum)
+    activate AlbumRepository
+    AlbumRepository-->>AlbumService: 8: saved album
+    deactivate AlbumRepository
+    AlbumService-->>AlbumController: 9: updated album
+    deactivate AlbumService
+    activate AlbumController
+    AlbumController-->>User: 10: Success response
+    deactivate AlbumController
+    activate User
+    Note right of User: Brief delay
+    deactivate User
 ```
 修改相册的流程如上所示，用户首先通过用户界面发起修改相册请求，然后由相册控制器将请求转发给相册服务。相册服务将处理修改相册请求，并将相册信息保存到数据库中。修改成功后，相册服务将返回相册对象给相册控制器。相册控制器将返回相册对象给用户界面，用户界面将显示相册信息。
 
@@ -373,51 +372,38 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor User
-    participant AlbumInterface
-    participant AlbumController
-    participant AlbumService
-    participant AlbumRepository
+    actor User 
+    participant AlbumController as :AlbumController
+    participant AlbumService as :AlbumService
+    participant AlbumRepository as :AlbumRepository
 
-    User ->> AlbumInterface: 1: updateCategoryRequest
+    User->>AlbumController: 1: updateCategoryRequest
     activate User
-    activate AlbumInterface
-
-    AlbumInterface ->> AlbumInterface: 1.1: checkUserPermission
-    alt User is not Admin
-        AlbumInterface -->> User: 1.2: Permission Denied
-        AlbumInterface ->> User: 1.3: Return to User
-    else
-        AlbumInterface ->> AlbumController: 2: updateCategory(oldCategory, newCategory)
-        activate AlbumController
-
-        AlbumController ->> AlbumService: 3: updateCategory(oldCategory, newCategory)
-        activate AlbumService
-
-        AlbumService ->> AlbumService: 4: validateCategories()
-
-        AlbumService ->> AlbumRepository: 5: findByCategory(oldCategory)
-        activate AlbumRepository
-        AlbumRepository -->> AlbumService: 6: albums list
-        deactivate AlbumRepository
-
-        AlbumService ->> AlbumService: 7: updateAlbumsCategory()
-
-        AlbumService ->> AlbumRepository: 8: saveAll(updatedAlbums)
-        activate AlbumRepository
-        AlbumRepository -->> AlbumService: 9: saved albums
-        deactivate AlbumRepository
-
-        AlbumService -->> AlbumController: 10: update result
-        deactivate AlbumService
-
-        AlbumController -->> AlbumInterface: 11: Response with update status
-        deactivate AlbumController
-
-        AlbumInterface -->> User: 12: Success response
-        deactivate AlbumInterface
-        deactivate User
-    end
+    activate AlbumController
+    Note right of User: Brief delay
+    deactivate User
+    AlbumController->>AlbumService: 2: updateCategory(oldCategory, newCategory)
+    activate AlbumService
+    Note right of AlbumController: Brief delay
+    deactivate AlbumController
+    AlbumService->>AlbumService: 3: validateCategories()
+    AlbumService->>AlbumRepository: 4: findByCategory(oldCategory)
+    activate AlbumRepository
+    AlbumRepository-->>AlbumService: 5: albums list
+    deactivate AlbumRepository
+    AlbumService->>AlbumService: 6: updateAlbumsCategory()
+    AlbumService->>AlbumRepository: 7: saveAll(updatedAlbums)
+    activate AlbumRepository
+    AlbumRepository-->>AlbumService: 8: saved albums
+    deactivate AlbumRepository
+    AlbumService-->>AlbumController: 9: update result
+    deactivate AlbumService
+    activate AlbumController
+    AlbumController-->>User: 10: Success response
+    deactivate AlbumController
+    activate User
+    Note right of User: Brief delay
+    deactivate User
 ```
 相册类别管理的流程如上所示，用户首先通过用户界面发起修改相册类别请求，然后由相册控制器将请求转发给相册服务。相册服务将处理修改相册类别请求，并将新的相册类别信息保存到数据库中。修改成功后，相册服务将找到所有原类别的相册，并将其类别更新为新类别。最后，相册服务将返回更新结果给相册控制器。相册控制器将返回更新结果给用户界面，用户界面将显示更新结果。
 
@@ -465,53 +451,40 @@ PhotoService --> PhotoRepository : "依赖"
 
 ```mermaid
 sequenceDiagram
-    actor User as :User
-    participant PhotoInterface as :PhotoInterface
+    actor User 
     participant PhotoController as :PhotoController
     participant PhotoService as :PhotoService
     participant PhotoRepository as :PhotoRepository
     participant Album as :Album
 
-    User->>PhotoInterface: 1: uploadPhoto(file, albumId)
+    User->>PhotoController: 1: uploadPhoto(file, albumId)
     activate User
-    activate PhotoInterface
-
-    PhotoInterface->>PhotoController: 2: uploadPhoto(file, albumId)
     activate PhotoController
-
-    PhotoController->>PhotoService: 3: uploadPhoto(file, albumId)
-    activate PhotoService
-
-    PhotoService->>PhotoService: 4: validatePhoto(file)
-
-    PhotoService->>Album: 5: findAlbumById(albumId)
-    activate Album
-    Album-->>PhotoService: 5.1: album object
-    deactivate Album
-
-    PhotoService->>PhotoService: 6: uploadFileToNginx(file)
-    PhotoService->>PhotoService: 7: createPhotoObject(fileUrl)
-
-    PhotoService->>PhotoRepository: 8: savePhoto(photo)
-    activate PhotoRepository
-    PhotoRepository-->>PhotoService: 8.1: saved photo
-    deactivate PhotoRepository
-
-    PhotoService->>Album: 9: addPhotoToAlbum(photo)
-    activate Album
-    Album-->>PhotoService: 9.1: updated album
-    deactivate Album
-
-    PhotoService-->>PhotoController: 10: photo details
-    deactivate PhotoService
-
-    PhotoController-->>PhotoInterface: 11: Response with photo details
-    deactivate PhotoController
-
-    PhotoInterface-->>User: 12: Upload success
-    deactivate PhotoInterface
+    Note right of User: Brief delay
     deactivate User
-
+    PhotoController->>PhotoService: 2: uploadPhoto(file, albumId)
+    activate PhotoService
+    Note right of PhotoController: Brief delay
+    deactivate PhotoController
+    PhotoService->>PhotoService: 3: validatePhoto(file)
+    PhotoService->>Album: 4: findAlbumById(albumId)
+    activate Album
+    Album-->>PhotoService: 4.1: album object
+    deactivate Album
+    PhotoService->>PhotoService: 5: uploadToFileServer(file)
+    PhotoService->>PhotoService: 6: createPhotoObject(fileUrl)
+    PhotoService->>PhotoRepository: 7: savePhoto(photo)
+    activate PhotoRepository
+    PhotoRepository-->>PhotoService: 7.1: saved photo
+    deactivate PhotoRepository
+    PhotoService-->>PhotoController: 8: photo details
+    deactivate PhotoService
+    activate PhotoController
+    PhotoController-->>User: 9: Upload success
+    deactivate PhotoController
+    activate User
+    Note right of User: Brief delay
+    deactivate User
 ```
 上传图片的流程如上所示，用户首先通过用户界面发起上传图片请求，然后由图片控制器将请求转发给图片服务。图片服务将处理上传图片请求，并首先验证图片文件。然后，图片服务将查找相册信息，上传图片文件到Nginx服务器，并创建图片对象。接着，图片服务将保存图片对象到数据库中，并将图片添加到相册中。最后，图片服务将返回图片信息给图片控制器。图片控制器将返回响应给用户界面，用户界面将显示上传图片信息。
 
@@ -519,35 +492,31 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor User as :User
-    participant PhotoInterface as :PhotoInterface
+    actor User 
     participant PhotoController as :PhotoController
     participant PhotoService as :PhotoService
     participant PhotoRepository as :PhotoRepository
 
-    User->>PhotoInterface: 1: getPhoto(photoId)
+    User->>PhotoController: 1: getPhoto(photoId)
     activate User
-    activate PhotoInterface
-
-    PhotoInterface->>PhotoController: 2: Forward getPhoto(photoId)
     activate PhotoController
-
-    PhotoController->>PhotoService: 3: Fetch photo(photoId)
+    Note right of User: Brief delay
+    deactivate User
+    PhotoController->>PhotoService: 2: Fetch photo(photoId)
     activate PhotoService
-
-    PhotoService->>PhotoRepository: 4: Query photo by ID(photoId)
-    activate PhotoRepository
-    PhotoRepository-->>PhotoService: 4.1: Photo data
-    deactivate PhotoRepository
-
-    PhotoService-->>PhotoController: 5: Photo details {id, name, url, ...}
-    deactivate PhotoService
-
-    PhotoController-->>PhotoInterface: 6: Photo details {id, name, url, ...}
+    Note right of PhotoController: Brief delay
     deactivate PhotoController
-
-    PhotoInterface-->>User: 7: Response: Photo details
-    deactivate PhotoInterface
+    PhotoService->>PhotoRepository: 3: Query photo by ID(photoId)
+    activate PhotoRepository
+    PhotoRepository-->>PhotoService: 3.1: Photo data
+    deactivate PhotoRepository
+    PhotoService-->>PhotoController: 4: Photo details {id, name, url, ...}
+    deactivate PhotoService
+    activate PhotoController
+    PhotoController-->>User: 5: Response: Photo details
+    deactivate PhotoController
+    activate User
+    Note right of User: Brief delay
     deactivate User
 
 ```
@@ -589,36 +558,37 @@ CommentService --> CommentRepository : "依赖"
 
 ```mermaid
 sequenceDiagram
-    actor User as :User
-    participant CommentInterface as :CommentInterface
+    actor User 
     participant CommentController as :CommentController
     participant CommentService as :CommentService
     participant CommentRepository as :CommentRepository
     participant Comment as :Comment
 
-    User->>CommentInterface: 1: Initiate add comment
+    User->>CommentController: 1: Initiate add comment
     activate User
-    activate CommentInterface
-    CommentInterface->>CommentController: 2: addComment(AddCommentRequest)
     activate CommentController
-    CommentController->>CommentService: 3: addComment(Comment)
-    activate CommentService
-    CommentService->>Comment: 4: Create Comment entity (populate fields using Comment class)
-    activate Comment
-    Comment-->>CommentService: 4.1: Return Comment entity
-    deactivate Comment
-    CommentService->>CommentRepository: 5: save(Comment)
-    activate CommentRepository
-    CommentRepository-->>CommentService: 6: Comment saved with ID
-    deactivate CommentRepository
-    CommentService-->>CommentController: 7: Comment object with ID
-    deactivate CommentService
-    CommentController-->>CommentInterface: 8: Response: Comment details with ID
-    deactivate CommentController
-    CommentInterface-->>User: 9: Display comment info and ID
-    deactivate CommentInterface
+    Note right of User: Brief delay
     deactivate User
-
+    CommentController->>CommentService: 2: addComment(Comment)
+    activate CommentService
+    Note right of CommentController: Brief delay
+    deactivate CommentController
+    CommentService->>Comment: 3: Create Comment entity (populate fields using Comment class)
+    activate Comment
+    Comment-->>CommentService: 3.1: Return Comment entity
+    deactivate Comment
+    CommentService->>CommentRepository: 4: save(Comment)
+    activate CommentRepository
+    CommentRepository-->>CommentService: 4.1: Comment saved with ID
+    deactivate CommentRepository
+    CommentService-->>CommentController: 5: Comment object with ID
+    deactivate CommentService
+    activate CommentController
+    CommentController-->>User: 6: Response: Comment details with ID
+    deactivate CommentController
+    activate User
+    Note right of User: Brief delay
+    deactivate User
 ```
 发表评论的流程如上所示，用户首先通过用户界面发起发表评论请求，然后由评论控制器将请求转发给评论服务。评论服务将处理发表评论请求，并将评论信息保存到数据库中。发表成功后，评论服务将返回评论对象给评论控制器。评论控制器将返回评论对象给用户界面，用户界面将显示评论信息。
 
@@ -626,29 +596,31 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor User as :User
-    participant CommentInterface as :CommentInterface
+    actor User 
     participant CommentController as :CommentController
     participant CommentService as :CommentService
     participant CommentRepository as :CommentRepository
-    
-    User->>CommentInterface: 1: Initiate get photo comment
+
+    User->>CommentController: 1: Initiate get photo comment
     activate User
-    activate CommentInterface
-    CommentInterface->>CommentController: 2: getPhotoComment(photoId)
     activate CommentController
-    CommentController->>CommentService: 3: getPhotoComment(photoId)
+    Note right of User: Brief delay
+    deactivate User
+    CommentController->>CommentService: 2: getPhotoComment(photoId)
     activate CommentService
-    CommentService->>CommentRepository: 4: findCommentsByPhotoId(photoId)
-    activate CommentRepository
-    CommentRepository-->>CommentService: 5: Comments found
-    deactivate CommentRepository
-    CommentService-->>CommentController: 6: List of comments
-    deactivate CommentService
-    CommentController-->>CommentInterface: 7: Response: List of comments
+    Note right of CommentController: Brief delay
     deactivate CommentController
-    CommentInterface-->>User: 8: Display list of comments
-    deactivate CommentInterface
+    CommentService->>CommentRepository: 3: findCommentsByPhotoId(photoId)
+    activate CommentRepository
+    CommentRepository-->>CommentService: 4: Comments found
+    deactivate CommentRepository
+    CommentService-->>CommentController: 5: List of comments
+    deactivate CommentService
+    activate CommentController
+    CommentController-->>User: 6: Response: List of comments
+    deactivate CommentController
+    activate User
+    Note right of User: Brief delay
     deactivate User
 
 ```
