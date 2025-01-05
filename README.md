@@ -8,67 +8,123 @@
 
 ```mermaid
 classDiagram
-direction BT
-class Album
-class AlbumController
-class AlbumRepository {
-<<Interface>>
-
+%% User模块
+class User {
+  + Long id
+  + String username
+  + String password
+  + String email
+  + LocalDateTime createdAt
+  + boolean isAdmin
+  + String role
 }
-class AlbumRequest
-class AlbumService
-class Comment
-class CommentController
-class CommentRepository {
-<<Interface>>
 
+class UserController {
+  + registerUser(User): ResponseEntity<?>
+  + loginUser(User): ResponseEntity<?>
 }
-class CommentService
-class JwtAuthenticationFilter
-class JwtUtil
-class Photo
-class PhotoAlbumApplication
-class PhotoController
-class PhotoRepository {
-<<Interface>>
 
+class UserService {
+  + registerUser(User): User
+  + authenticateUser(String, String): User
 }
-class PhotoRequest
-class PhotoService
-class RegisterRequest
-class SecurityConfig
-class User
-class UserController
+
 class UserRepository {
-<<Interface>>
-
+  <<Interface>>
+  + findByUsername(String): Optional<User>
 }
-class UserService
 
-Album "1" *--> "photos *" Photo 
-Album "1" *--> "user 1" User 
-AlbumController  ..>  Album : «create»
-AlbumController "1" *--> "albumService 1" AlbumService 
-AlbumController  ..>  User : «create»
-AlbumService "1" *--> "albumRepository 1" AlbumRepository 
-Comment "1" *--> "photo 1" Photo 
-Comment "1" *--> "user 1" User 
-CommentController "1" *--> "commentService 1" CommentService 
-CommentService "1" *--> "commentRepository 1" CommentRepository 
-JwtAuthenticationFilter "1" *--> "jwtUtil 1" JwtUtil 
-Photo "1" *--> "album 1" Album 
-Photo "1" *--> "comments *" Comment 
-Photo "1" *--> "user 1" User 
-PhotoController  ..>  Album : «create»
-PhotoController  ..>  Photo : «create»
-PhotoController "1" *--> "photoService 1" PhotoService 
-PhotoService "1" *--> "photoRepository 1" PhotoRepository 
-SecurityConfig  ..>  JwtAuthenticationFilter : «create»
-SecurityConfig "1" *--> "jwtUtil 1" JwtUtil 
-UserController "1" *--> "jwtUtil 1" JwtUtil 
-UserController  ..>  User : «create»
-UserController "1" *--> "userService 1" UserService 
-UserService "1" *--> "userRepository 1" UserRepository 
+UserController --> UserService : "使用"
+UserService --> UserRepository : "依赖"
+
+%% Album模块
+class Album {
+  + Long id
+  + String title
+  + String description
+  + String category
+  + LocalDateTime createdAt
+  + LocalDateTime updatedAt
+  + User user
+}
+
+class AlbumController {
+  + createAlbum(Album): ResponseEntity<?>
+  + getUserAlbums(Long): ResponseEntity<?>
+}
+
+class AlbumService {
+  + createAlbum(Album): Album
+  + getUserAlbums(Long): List<Album>
+}
+
+class AlbumRepository {
+  <<Interface>>
+  + findByUserId(Long): List<Album>
+}
+
+Album --> Photo : "包含"
+Album --> User : "属于"
+AlbumController --> AlbumService : "依赖"
+AlbumService --> AlbumRepository : "依赖"
+
+%% Photo模块
+class Photo {
+  + Long id
+  + String title
+  + String description
+  + String url
+  + LocalDateTime createdAt
+  + LocalDateTime updatedAt
+}
+
+class PhotoController {
+  + getPhoto(Long): ResponseEntity<Photo>
+  + getPhotosByAlbum(Long): ResponseEntity<List<Photo>>
+}
+
+class PhotoService {
+  + getPhoto(Long): Photo
+  + getPhotosByAlbum(Long): List<Photo>
+}
+
+class PhotoRepository {
+  <<Interface>>
+  + findByAlbumId(Long): List<Photo>
+}
+
+Photo --> Album : "属于"
+Photo --> User : "属于"
+Photo --> Comment : "包含"
+PhotoService --> PhotoRepository : "依赖"
+PhotoController --> PhotoService : "依赖"
+
+%% Comment模块
+class Comment {
+  + Long id
+  + String content
+  + LocalDateTime commentTime
+}
+
+class CommentController {
+  + addComment(Comment): ResponseEntity<?>
+  + getPhotoComments(Long): ResponseEntity<?>
+}
+
+class CommentService {
+  + addComment(Comment): Comment
+  + getPhotoComments(Long): List<Comment>
+}
+
+class CommentRepository {
+  <<Interface>>
+  + findByPhotoId(Long): List<Comment>
+}
+
+Comment --> Photo : "属于"
+Comment --> User : "属于"
+CommentService --> CommentRepository : "依赖"
+CommentController --> CommentService : "依赖"
 
 ```
 
@@ -219,8 +275,7 @@ class AlbumRepository {
 Album --> Photo : "包含"
 Album --> User : "属于"
 AlbumController --> AlbumService : "依赖"
-AlbumService --> AlbumRepository : "依赖"
-```
+AlbumService --> AlbumRepository : "依赖"```
 
 #### 创建相册
 
@@ -380,6 +435,8 @@ class Photo {
   + toString(): String
   + equals(Object): boolean
   + hashCode(): int
+  + Album album
+  + User user
 }
 class PhotoController {
   + getPhoto(id: Long): ResponseEntity<Photo>
@@ -522,10 +579,9 @@ class CommentRepository {
   + findByPhotoId(photoId: Long): List<Comment>
 }
 Comment --> Photo : "属于"
-Comment --> User : "由用户创建"
+Comment --> User : "属于"
 CommentController --> CommentService : "依赖"
 CommentService --> CommentRepository : "依赖"
-
 ```
 
 #### 发表评论
