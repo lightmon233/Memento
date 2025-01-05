@@ -25,6 +25,7 @@ export interface Photo {
   albumId: number;
   userId: number;
   createdAt: string;
+  comments: Comment[];
 }
 
 export interface Comment {

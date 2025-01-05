@@ -67,4 +67,9 @@ public class PhotoController {
             return ResponseEntity.badRequest().body("Error retrieving photo: " + e.getMessage());
         }
     }
+
+    @GetMapping("/public/")
+    public ResponseEntity<?> getPublicPhotos() {
+        return ResponseEntity.ok(photoService.getPublicPhotos());
+    }
 }

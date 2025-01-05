@@ -1,5 +1,6 @@
 package com.photoalbum.service;
 
+import com.photoalbum.model.Album;
 import com.photoalbum.model.Photo;
 import com.photoalbum.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ import java.util.UUID;
 public class PhotoService {
     @Autowired
     private PhotoRepository photoRepository;
+
+    @Autowired
+    private AlbumService AlbumService;
 
     @Value("${nginx.upload.url}")
     private String nginxUrl;
@@ -81,5 +85,12 @@ public class PhotoService {
 
     public Photo getPhoto(Long id) {
         return photoRepository.findById(id).orElse(null);
+    }
+
+    public List<Photo> getPublicPhotos() {
+        // 先获取所有public的相册
+        // 然后获取这些相册的所有照片
+        List<Album> albums = AlbumService.getPublicAlbums();
+        return photoRepository.findByAlbumIn(albums);
     }
 }
