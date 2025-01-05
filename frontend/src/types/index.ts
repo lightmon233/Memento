@@ -14,6 +14,8 @@ export interface Album {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  isPublic: boolean;
+  allowComments: boolean;
 }
 
 export interface Photo {

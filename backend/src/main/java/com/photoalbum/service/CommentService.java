@@ -1,5 +1,6 @@
 package com.photoalbum.service;
 
+import com.photoalbum.model.Album;
 import com.photoalbum.model.Comment;
 import com.photoalbum.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,12 @@ import java.util.List;
 public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
+    public static boolean isCommentAllowed(Album album) {
+        return album.isAllowComments(); // 判断是否允许评论
+    }
     
     public Comment addComment(Comment comment) {
+
         return commentRepository.save(comment);
     }
     

@@ -2,6 +2,7 @@ package com.photoalbum.model;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,21 +12,29 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true)
     private String username;
-    private String password;
-    private String email;
-    private boolean isAdmin;
-    
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<Album> albums;
 
-    // 添加 getCreatedAt 方法
-    // 添加记录用户创建时间的字段
+    private String password;
+
+    private String email;
+
+    private boolean isAdmin;
+
+    private String role;
+
+    // 添加 setActive 方法
+    // 添加 getActive 方法
+    // 用户是否启用
+    @Setter
+    @Getter
+    private boolean active;  // true = 启用, false = 禁用
+
     @Getter
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
