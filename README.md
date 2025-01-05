@@ -275,7 +275,8 @@ class AlbumRepository {
 Album --> Photo : "包含"
 Album --> User : "属于"
 AlbumController --> AlbumService : "依赖"
-AlbumService --> AlbumRepository : "依赖"```
+AlbumService --> AlbumRepository : "依赖"
+```
 
 #### 创建相册
 
