@@ -67,4 +67,9 @@ public class CommentController {
     public ResponseEntity<?> getPhotoComments(@PathVariable Long photoId) {
         return ResponseEntity.ok(commentService.getPhotoComments(photoId));
     }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<?> getCommentById(@PathVariable Long commentId) {
+        return ResponseEntity.ok(commentService.getComment(commentId));
+    }
 }

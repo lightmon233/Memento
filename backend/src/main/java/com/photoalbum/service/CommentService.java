@@ -25,4 +25,8 @@ public class CommentService {
     public List<Comment> getPhotoComments(Long photoId) {
         return commentRepository.findByPhotoId(photoId);
     }
+
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId).orElse(null);
+    }
 }

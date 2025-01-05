@@ -104,10 +104,17 @@ export const PhotoView: React.FC = () => {
         throw new Error(`Failed to add comment: ${response.statusText}`);
       }
       const addedcomment = await response.json();
+      const altercomment = await fetch(`/api/comments/${addedcomment.user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        }
+      })
       console.log(addedcomment.user.username);
       const commentWithUserName = {
         ...addedcomment,
-        userId: addedcomment.user.id
+        userId: addedcomment.user.username
       }
       console.log(commentWithUserName)
       setComments(prevcomments => [...prevcomments, commentWithUserName]);

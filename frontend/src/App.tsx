@@ -8,6 +8,7 @@ import { AlbumList } from './pages/AlbumList';
 import { PhotoView } from './pages/PhotoView';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { PhotoGridView } from './pages/PhotoGridView.tsx';
+import { Explore } from './pages/Explore.tsx';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/albums/:id" element={<PhotoGridView />}></Route>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/" element={<AlbumList />} />
+            <Route path="/explore" element={<Explore />} />
           </Routes>
         </Layout>
       </AuthProvider>

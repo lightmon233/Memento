@@ -78,6 +78,11 @@ public class AlbumController {
                     .body(Collections.singletonMap("error", "Failed to fetch albums"));
         }
     }
+
+    @GetMapping("/public")
+    public ResponseEntity<?> getPublicAlbums() {
+        return ResponseEntity.ok(albumService.getPublicAlbums());
+    }
     
     @GetMapping("/category/{category}")
     public ResponseEntity<?> getAlbumsByCategory(@PathVariable String category) {

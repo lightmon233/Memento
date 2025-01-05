@@ -76,6 +76,10 @@ public class AlbumService {
         return albums != null ? albums : Collections.emptyList();
     }
 
+    public List<Album> getPublicAlbums() {
+        return albumRepository.findByIsPublicTrue();
+    }
+
     // 获取单个相册
     public Album getAlbum(Long id) {
         return albumRepository.findById(id).orElse(null);

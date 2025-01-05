@@ -8,4 +8,5 @@ import java.util.List;
 public interface AlbumRepository extends JpaRepository<Album, Long> {
     List<Album> findByUserId(Long userId);
     List<Album> findByCategory(String category);
+    List<Album> findByIsPublicTrue();
 }
