@@ -78,77 +78,39 @@ UserService "1" *--> "userRepository 1" UserRepository
 
 ```mermaid
 classDiagram
-direction BT
 class User {
-  + User() 
-  - String username
-  - String password
-  - String email
-  - LocalDateTime createdAt
-  - Long id
-  - boolean isAdmin
-  # canEqual(Object) boolean
-  + toString() String
-  + hashCode() int
-  + equals(Object) boolean
-  # onCreate() void
-   String password
-   LocalDateTime createdAt
-   Long id
-   String email
-   boolean isAdmin
-   String username
-   String role
+  + Long id
+  + String username
+  + String password
+  + String email
+  + LocalDateTime createdAt
+  + boolean isAdmin
+  + String role
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
 }
 class UserController {
-  + UserController() 
-  + registerUser(RegisterRequest) ResponseEntity~?~
-  + loginUser(User) ResponseEntity~?~
+  + UserController()
+  + registerUser(User): ResponseEntity<?>
+  + loginUser(User): ResponseEntity<?>
 }
 class UserService {
-  + UserService() 
-  + registerUser(User) User
-  + authenticateUser(String, String) User
-  + findByUsername(String) User
+  + UserService()
+  + registerUser(User): User
+  + authenticateUser(String, String): User
+  + findByUsername(String): User
 }
 class UserRepository {
-<<Interface>>
-  + findByUsername(String) Optional~User~
-  + existsByUsername(String) boolean
+  <<Interface>>
+  + findByUsername(String): Optional<User>
+  + existsByUsername(String): boolean
 }
-class RegisterRequest {
-  + RegisterRequest() 
-  - String email
-  - String confirmPassword
-  - String password
-  - String username
-  + toString() String
-  + equals(Object) boolean
-  # canEqual(Object) boolean
-  + hashCode() int
-   String password
-   String username
-   String email
-   String confirmPassword
-}
-class JwtUtil {
-  + JwtUtil() 
-  + extractUserId(String) Long
-  + extractRole(String) String
-  + validateToken(String) boolean
-  + extractUsername(String) String
-  + generateToken(User) String
-  + extractAllClaims(String) Claims
-  + extractCreatedAt(String) String
-}
-UserController --> UserService : "使用"
-UserService --> UserRepository : "调用"
-UserController --> JwtUtil : "使用"
-UserService --> RegisterRequest : "处理"
-UserController --> RegisterRequest : "接收"
-UserController --> UserRepository : "使用"
-UserService --> JwtUtil : "使用"
 
+UserController --> UserService : "依赖"
+UserService --> UserRepository : "依赖"
+UserController --> UserRepository : "调用"
 ```
 
 #### 用户注册&登录
@@ -214,77 +176,50 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-   class Album {
-  + Album() 
-  - String category
-  - LocalDateTime updatedAt
-  - String title
-  - Long id
-  - List~Photo~ photos
-  - String description
-  - User user
-  - LocalDateTime createdAt
-  # canEqual(Object) boolean
-  + toString() String
-  + equals(Object) boolean
-  + hashCode() int
-    String description
-       LocalDateTime updatedAt
-       LocalDateTime createdAt
-       String title
-       Long id
-       List~Photo~ photos
-       String category
-       User user
-    }
-    class AlbumController {
-  + AlbumController() 
-  + createAlbum(AlbumRequest) ResponseEntity~?~
-  + getUserAlbums(Long) ResponseEntity~?~
-  + updateCategory(String, String) ResponseEntity~?~
-  + updateAlbum(Long, Album) ResponseEntity~?~
-  + getAlbumsByCategory(String) ResponseEntity~?~
-  + addCategory(String) ResponseEntity~?~
-  + deleteCategory(String) ResponseEntity~?~
-    ResponseEntity~?~ allAlbums
-    }
-    class AlbumRepository {
-    <<Interface>>
-  + findByUserId(Long) List~Album~
-  + findByCategory(String) List~Album~
-    }
-    class AlbumRequest {
-  + AlbumRequest() 
-  - String category
-  - String description
-  - Long userId
-  - String title
-  + toString() String
-  + equals(Object) boolean
-  # canEqual(Object) boolean
-  + hashCode() int
-    String description
-       Long userId
-       String title
-       String category
-    }
-    class AlbumService {
-  + AlbumService() 
-  + getAlbumsByCategory(String) List~Album~
-  + getUserAlbums(Long) List~Album~
-  + addCategory(String) void
-  + createAlbum(Album) Album
-  + updateCategory(String, String) void
-  + deleteCategory(String) void
-  + updateAlbum(Album) Album
-    List~Album~ allAlbums
-    }
+class Album {
+  + Long id
+  + String title
+  + String description
+  + String category
+  + LocalDateTime createdAt
+  + LocalDateTime updatedAt
+  + User user
+  + List<Photo> photos
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+}
+class AlbumController {
+  + AlbumController()
+  + createAlbum(Album): ResponseEntity<?>
+  + getUserAlbums(Long): ResponseEntity<?>
+  + updateCategory(String, String): ResponseEntity<?>
+  + updateAlbum(Long, Album): ResponseEntity<?>
+  + getAlbumsByCategory(String): ResponseEntity<?>
+  + addCategory(String): ResponseEntity<?>
+  + deleteCategory(String): ResponseEntity<?>
+}
+class AlbumService {
+  + AlbumService()
+  + getAlbumsByCategory(String): List<Album>
+  + getUserAlbums(Long): List<Album>
+  + addCategory(String): void
+  + createAlbum(Album): Album
+  + updateCategory(String, String): void
+  + deleteCategory(String): void
+  + updateAlbum(Album): Album
+}
+class AlbumRepository {
+  <<Interface>>
+  + findByUserId(Long): List<Album>
+  + findByCategory(String): List<Album>
+}
+
 Album --> Photo : "包含"
 Album --> User : "属于"
-AlbumController  ..>  Album : "创建"
-AlbumController --> AlbumService : "使用"
-AlbumController  ..>  User : "创建"
-AlbumService --> AlbumRepository : "使用"
+AlbumController --> AlbumService : "依赖"
+AlbumService --> AlbumRepository : "依赖"
 ```
 
 #### 创建相册
@@ -434,66 +369,38 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-    %% Photo模块的依赖关系和继承外部模块的关系
-    %% PhotoController类
-    class PhotoController {
-        +getPhoto(id: Long): ResponseEntity<Photo>
-        +getPhotosByAlbum(albumId: Long): ResponseEntity<List<Photo>>
-        +uploadPhoto(file: MultipartFile): ResponseEntity<Photo>
-    }
-    PhotoController --> PhotoService : "使用"
-    PhotoController --> ResponseEntity : "返回"
-    %% PhotoService类
-    class PhotoService {
-        +getPhoto(id: Long): Photo
-        +getPhotosByAlbum(albumId: Long): List<Photo>
-        +uploadPhoto(file: MultipartFile): Photo
-    }
-    PhotoService --> PhotoRepository : "使用"
-    PhotoService --> Photo : "操作"
-    %% Photo类
-    class Photo {
-        -id: Long
-        -title: String
-        -description: String
-        -url: String
-        -createdAt: LocalDateTime
-        -updatedAt: LocalDateTime
-        -isPublic: Boolean
-    }
-    Photo --> Album : "属于"
-    Photo --> User : "属于"
-    Photo --> Comment : "包含"
-    %% 外部模块关系
-    class PhotoRepository {
-        +findByAlbumId(albumId: Long): List<Photo>
-        +findById(id: Long): Optional<Photo>
-        +save(photo: Photo): Photo
-    }
-    PhotoService --> PhotoRepository : "使用"
-    
-    class Album {
-        -id: Long
-        -title: String
-        -description: String
-        -photos: List<Photo>
-    }
-    Photo --> Album : "属于"
-    class User {
-        -id: Long
-        -username: String
-        -email: String
-        -photos: List<Photo>
-    }
-    Photo --> User : "属于"
-    class Comment {
-        -id: Long
-        -content: String
-        -photo: Photo
-        -createdAt: LocalDateTime
-    }
+class Photo {
+  + Long id
+  + String title
+  + String description
+  + String url
+  + LocalDateTime createdAt
+  + LocalDateTime updatedAt
+  + boolean isPublic
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+}
+class PhotoController {
+  + getPhoto(id: Long): ResponseEntity<Photo>
+  + getPhotosByAlbum(albumId: Long): ResponseEntity<List<Photo>>
+  + uploadPhoto(file: MultipartFile): ResponseEntity<Photo>
+}
+class PhotoService {
+  + getPhoto(id: Long): Photo
+  + getPhotosByAlbum(albumId: Long): List<Photo>
+  + uploadPhoto(file: MultipartFile): Photo
+}
+class PhotoRepository {
+  + findByAlbumId(albumId: Long): List<Photo>
+  + findById(id: Long): Optional<Photo>
+  + save(photo: Photo): Photo
+}
+Photo --> Album : "属于"
+Photo --> User : "属于"
 Photo --> Comment : "包含"
-
+PhotoController --> PhotoService : "依赖"
+PhotoService --> PhotoRepository : "依赖"
 ```
 
 #### 上传图片
@@ -592,71 +499,32 @@ sequenceDiagram
 
 ```mermaid
 classDiagram
-%% Comment模块的依赖关系和继承外部模块的关系
-
-%% CommentController类
-class CommentController {
-    +addComment(comment: Comment): ResponseEntity<?>
-    +getPhotoComments(photoId: Long): ResponseEntity<?>
-}
-CommentController --> CommentService : "使用"
-
-%% CommentService类
-class CommentService {
-    +getPhotoComments(photoId: Long): List<Comment>
-    +addComment(comment: Comment): Comment
-}
-CommentService --> CommentRepository : "访问"
-CommentService --> Comment : "操作"
-
-%% Comment类
 class Comment {
-    -id: Long
-    -content: String
-    -commentTime: LocalDateTime
-    -user: User
-    -photo: Photo
-    +toString(): String
-    +equals(object: Object): boolean
-    +hashCode(): int
+  + Long id
+  + String content
+  + LocalDateTime commentTime
+  + Photo photo
+  + User user
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
 }
-Comment --> Photo : "属于"
-Comment --> User : "由用户创建"
-
-%% CommentRepository接口
+class CommentController {
+  + addComment(comment: Comment): ResponseEntity<?>
+  + getPhotoComments(photoId: Long): ResponseEntity<?>
+}
+class CommentService {
+  + getPhotoComments(photoId: Long): List<Comment>
+  + addComment(comment: Comment): Comment
+}
 class CommentRepository {
-    <<Interface>>
-    +findByPhotoId(photoId: Long): List<Comment>
-}
-CommentService --> CommentRepository : "使用"
-
-%% 关联模块关系
-class Photo {
-    -id: Long
-    -url: String
-    -album: Album
-    -comments: List<Comment>
-    -user: User
-    -title: String
-    -createdAt: LocalDateTime
-    +toString(): String
-    +equals(object: Object): boolean
-    +hashCode(): int
+  <<Interface>>
+  + findByPhotoId(photoId: Long): List<Comment>
 }
 Comment --> Photo : "属于"
-
-class User {
-    -id: Long
-    -username: String
-    -password: String
-    -email: String
-    -createdAt: LocalDateTime
-    -isAdmin: Boolean
-    +toString(): String
-    +hashCode(): int
-    +equals(object: Object): boolean
-}
 Comment --> User : "由用户创建"
+CommentController --> CommentService : "依赖"
+CommentService --> CommentRepository : "依赖"
 
 ```
 
