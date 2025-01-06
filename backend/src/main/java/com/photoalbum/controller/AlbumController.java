@@ -32,6 +32,8 @@ public class AlbumController {
         // 创建一个新的Album对象
         Category category = new Category();
         category.setName(request.getCategory());
+        Long id = categoryRepository.findByName(request.getCategory()).get(0).getId();
+        category.setId(id);
         categoryRepository.save(category);
         Album album = new Album();
         album.setTitle(request.getTitle());
