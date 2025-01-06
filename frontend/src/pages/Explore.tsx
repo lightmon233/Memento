@@ -29,7 +29,14 @@ export const Explore = () => {
                 }
 
                 const data = await response.json();
-                setPhotos(data); // Assume the response includes an array of photos
+                console.log(data);
+
+                // Sort photos by createdAt (newest first)
+                const sortedPhotos = data.sort((a: Photo, b: Photo) => {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                });
+
+                setPhotos(sortedPhotos); // Set sorted photos
             } catch (error) {
                 console.error("Failed to fetch public photos:", error);
             }
@@ -50,6 +57,7 @@ export const Explore = () => {
                         <PhotoCard
                             key={photo.id}
                             photo={photo}
+                            createdAt={photo.createdAt}
                             comments={photo.comments ?? []}
                         />
                     );
@@ -60,4 +68,3 @@ export const Explore = () => {
 };
 
 export default Explore;
-

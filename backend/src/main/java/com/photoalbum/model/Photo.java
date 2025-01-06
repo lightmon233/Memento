@@ -26,7 +26,7 @@ public class Photo {
     
     @ManyToOne
     @JoinColumn(name = "album_id")
-    @JsonBackReference
+    // @JsonBackReference
     private Album album;
 
     @ManyToOne

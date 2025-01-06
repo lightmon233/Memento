@@ -11,7 +11,7 @@ export interface Album {
   title: string;
   description: string;
   category: string;
-  userId: number;
+  user: User;
   createdAt: string;
   updatedAt: string;
   isPublic: boolean;
@@ -22,8 +22,8 @@ export interface Photo {
   id: number;
   title: string;
   url: string;
-  albumId: number;
-  userId: number;
+  album: Album;
+  user: User;
   createdAt: string;
   comments: Comment[];
 }
@@ -31,7 +31,7 @@ export interface Photo {
 export interface Comment {
   id: number;
   content: string;
-  userId: number;
+  user: User;
   photoId: number;
   createdAt: string;
 }

@@ -4,10 +4,11 @@ import { Comment } from '../types';
 
 interface PhotoCardProps {
     photo: Photo;
+    createdAt: string;
     comments: Comment[];
 }
 
-export const PhotoCard: React.FC<PhotoCardProps> = ({ photo, comments }) => {
+export const PhotoCard: React.FC<PhotoCardProps> = ({ photo, createdAt, comments }) => {
 
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-row w-full h-[280px]"> {/* 设置固定高度 */}
@@ -37,21 +38,23 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({ photo, comments }) => {
 
                 {/* Display userId and createdAt */}
                 <div className="mt-2 text-sm text-gray-600">
-                    <p><strong>User:</strong> {photo.userId}</p>
-                    <p><strong>Created At:</strong> {new Date(photo.createdAt).toLocaleString()}</p>
+                    <p><strong>Album:</strong> {photo.album.title} </p>
+                    <p><strong>User:</strong> {photo.user.username}</p>
+                    <p><strong>Created At:</strong> {new Date(createdAt).toLocaleString()}</p>
                 </div>
 
                 {/* Display comments */}
                 <div className="mt-4 flex-grow">
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">Comments:</h4>
                     <div>
-                        {comments.slice(0, 3).map((comment, index) => (
+                        {comments.slice(0, 3).map((comment, index) => {
+                            return (
                             <div key={comment.id} className="mb-2">
                                 <p className="text-sm text-gray-600">
-                                    <strong>{comment.userId}</strong>: {comment.content}
+                                    <strong>{comment.user.username}</strong>: {comment.content}
                                 </p>
-                            </div>
-                        ))}
+                            </div>);
+                    })}
                     </div>
 
                     {/* If there are more than 3 comments, show a "See more" link */}

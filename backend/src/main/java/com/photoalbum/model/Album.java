@@ -31,9 +31,9 @@ public class Album {
     private User user;
 
     // 相册和照片之间的关系（每个相册拥有多张照片）
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
-    @JsonManagedReference // 防止循环引用
-    private List<Photo> photos;
+//    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
+//    @JsonManagedReference // 防止循环引用
+//    private List<Photo> photos;
 
     // 创建时间，自动填充
     @CreationTimestamp
