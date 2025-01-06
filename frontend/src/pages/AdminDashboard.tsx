@@ -34,7 +34,8 @@ export const AdminDashboard: React.FC = () => {
   const handleAddCategory = async () => {
     try {
       const newCategory = { name: categoryName, description: categoryDescription };
-      const response = await axios.post('/api/categories', newCategory);
+      const yetAnotherNewCategory = { name: categoryName };
+      const response = await axios.post('/api/categories', yetAnotherNewCategory);
       setCategories([...categories, response.data]);
       setShowModal(false); // 关闭 Modal
       setCategoryName('');
