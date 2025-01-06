@@ -22,7 +22,10 @@ public class Album {
 
     private String title;  // 相册标题
     private String description;  // 相册描述
-    private String category;  // 相册分类
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     // 用户与相册之间的关系（相册拥有者）
     @ManyToOne

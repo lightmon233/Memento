@@ -6,11 +6,16 @@ export interface User {
   createdAt: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+}
+
 export interface Album {
   id: number;
   title: string;
   description: string;
-  category: string;
+  category: Category;
   user: User;
   createdAt: string;
   updatedAt: string;

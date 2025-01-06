@@ -10,6 +10,7 @@ export const AlbumList: React.FC = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [albumToEdit, setAlbumToEdit] = useState<Album | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   // Fetch albums when user changes or initially
   useEffect(() => {
@@ -31,11 +32,37 @@ export const AlbumList: React.FC = () => {
             throw new Error(`Error: ${response.status}`);
           }
           const data = await response.json();
+          console.log(data);
           setAlbums(data);
         } catch (error) {
           console.error("Failed to fetch albums:", error);
         }
       };
+      const fetchCategories = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error("No token found!");
+          return;
+        }
+        try {
+          const response = await fetch('/api/categories', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          const data = await response.json();
+          const names = data.map(item => item.name);
+          setCategories(names);
+        } catch (error) {
+          console.error('Failed to fetch categories:', error);
+        }
+      }
+
+      fetchCategories();
       fetchAlbums();
     }
   }, [user]); // Re-fetch when user changes
@@ -186,7 +213,10 @@ export const AlbumList: React.FC = () => {
               <AlbumCard
                   key={album.id}
                   album={album}
-                  onEdit={() => setAlbumToEdit(album)}
+                  onEdit={() => {
+                    setAlbumToEdit(album);
+                    setShowCreateModal(true);
+                  }}
                   onDeleteAlbum={handleDeleteAlbum}
                   onUpdateAlbum={handleUpdateAlbum}
               />
@@ -196,9 +226,13 @@ export const AlbumList: React.FC = () => {
         {/* Modal for create/edit album */}
         <Modal
             showModal={showCreateModal}
-            onClose={() => setShowCreateModal(false)}
+            onClose={() => {
+              setShowCreateModal(false);
+              setAlbumToEdit(null);
+            }}
             onSubmit={albumToEdit ? handleEditAlbum : handleCreateAlbum}
             album={albumToEdit ? { title: albumToEdit.title, description: albumToEdit.description, category: albumToEdit.category } : undefined}
+            categories={categories}
         />
       </div>
   );

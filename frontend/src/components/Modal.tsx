@@ -5,15 +5,20 @@ interface ModalProps {
   onClose: () => void;
   onSubmit: (album: { title: string, description: string, category: string }) => void;
   album?: { title: string, description: string, category: string }; // optional for editing
+  categories: string[];
 }
 
-export const Modal: React.FC<ModalProps> = ({ showModal, onClose, onSubmit, album }) => {
+export const Modal: React.FC<ModalProps> = ({ showModal, onClose, onSubmit, album, categories }) => {
   const [title, setTitle] = React.useState(album?.title || '');
   const [description, setDescription] = React.useState(album?.description || '');
   const [category, setCategory] = React.useState(album?.category || '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!title || !description || !category) {
+      alert("All fields are required.");
+      return;
+    }
     onSubmit({ title, description, category });
     onClose(); // Close modal after submit
   };
@@ -48,14 +53,20 @@ export const Modal: React.FC<ModalProps> = ({ showModal, onClose, onSubmit, albu
           </div>
           <div className="mb-4">
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-            <input
+            <select
               id="category"
-              type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
-            />
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex justify-end">
             <button

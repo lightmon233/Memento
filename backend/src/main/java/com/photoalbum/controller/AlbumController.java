@@ -3,7 +3,9 @@ package com.photoalbum.controller;
 import com.photoalbum.dto.AlbumRequest;
 import com.photoalbum.dto.AlbumSettingsRequest;
 import com.photoalbum.model.Album;
+import com.photoalbum.model.Category;
 import com.photoalbum.model.User;
+import com.photoalbum.repository.CategoryRepository;
 import com.photoalbum.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,17 +21,22 @@ import java.util.List;
 public class AlbumController {
     @Autowired
     private AlbumService albumService;
-    
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @PostMapping
     public ResponseEntity<?> createAlbum(@RequestBody AlbumRequest request) {
         // 使用userId构造一个User对象
         User user = new User();
         user.setId(request.getUserId());
         // 创建一个新的Album对象
+        Category category = new Category();
+        category.setName(request.getCategory());
+        categoryRepository.save(category);
         Album album = new Album();
         album.setTitle(request.getTitle());
         album.setDescription(request.getDescription());
-        album.setCategory(request.getCategory());
+        album.setCategory(category);
         album.setUser(user); // 设置user用户
         // 保存album
         return ResponseEntity.ok(albumService.createAlbum(album, request.getUserId()));

@@ -68,7 +68,7 @@ export const AlbumCard: React.FC<AlbumCardProps> = ({ album, onEdit, onDeleteAlb
                 </div>
                 <p className="text-gray-600 text-sm mb-4">{album.description}</p>
                 <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>{album.category}</span>
+                    <span>{album.category.name}</span>
                     <span>{format(new Date(album.createdAt), 'MMM d, yyyy')}</span>
                 </div>
             </div>
