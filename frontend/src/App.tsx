@@ -9,6 +9,7 @@ import { PhotoView } from './pages/PhotoView';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { PhotoGridView } from './pages/PhotoGridView.tsx';
 import { Explore } from './pages/Explore.tsx';
+import { Profile } from './pages/Profile.tsx';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/" element={<AlbumList />} />
             <Route path="/explore" element={<Explore />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </Layout>
       </AuthProvider>
